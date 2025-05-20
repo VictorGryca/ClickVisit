@@ -1,5 +1,5 @@
 CREATE TABLE "agencies"(
-    "id" UUID NOT NULL,
+    "id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "created_at" TIMESTAMP(0) WITH
         TIME zone NOT NULL DEFAULT 'now()'
@@ -7,17 +7,17 @@ CREATE TABLE "agencies"(
 ALTER TABLE
     "agencies" ADD PRIMARY KEY("id");
 CREATE TABLE "brokers"(
-    "id" UUID NOT NULL,
-    "user_id" UUID NOT NULL,
-    "agency_id" UUID NOT NULL,
+    "id" INTEGER NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "agency_id" INTEGER NOT NULL,
     "creci" TEXT NOT NULL,
     "phone" TEXT NOT NULL
 );
 ALTER TABLE
     "brokers" ADD PRIMARY KEY("id");
 CREATE TABLE "properties"(
-    "id" UUID NOT NULL,
-    "agency_id" UUID NOT NULL,
+    "id" INTEGER NOT NULL,
+    "agency_id" INTEGER NOT NULL,
     "address" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
     "status" TEXT NOT NULL
@@ -25,16 +25,16 @@ CREATE TABLE "properties"(
 ALTER TABLE
     "properties" ADD PRIMARY KEY("id");
 CREATE TABLE "events"(
-    "id" UUID NOT NULL,
+    "id" INTEGER NOT NULL,
     "event_type" TEXT NOT NULL,
-    "broker_id" UUID NOT NULL,
-    "property_id" UUID NOT NULL,
+    "broker_id" INTEGER NOT NULL,
+    "property_id" INTEGER NOT NULL,
     "starts_at" TIMESTAMP(0) WITH
         TIME zone NOT NULL,
         "ends_at" TIMESTAMP(0)
     WITH
         TIME zone NOT NULL,
-        "created_by" UUID NOT NULL
+        "created_by" INTEGER NOT NULL
 );
 ALTER TABLE
     "events" ADD PRIMARY KEY("id");
@@ -42,7 +42,7 @@ COMMENT
 ON COLUMN
     "events"."event_type" IS '"block","maintenance"';
 CREATE TABLE "clients"(
-    "id" UUID NOT NULL,
+    "id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "phone" TEXT NOT NULL
@@ -50,10 +50,10 @@ CREATE TABLE "clients"(
 ALTER TABLE
     "clients" ADD PRIMARY KEY("id");
 CREATE TABLE "visits"(
-    "id" UUID NOT NULL,
-    "client_id" UUID NOT NULL,
-    "broker_id" UUID NOT NULL,
-    "property_id" UUID NOT NULL,
+    "id" INTEGER NOT NULL,
+    "client_id" INTEGER NOT NULL,
+    "broker_id" INTEGER NOT NULL,
+    "property_id" INTEGER NOT NULL,
     "starts_at" TIMESTAMP(0) WITH
         TIME zone NOT NULL,
         "ends_at" TIMESTAMP(0)

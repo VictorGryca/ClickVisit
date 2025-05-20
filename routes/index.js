@@ -1,16 +1,12 @@
+// routes/index.js
 const express = require('express');
 const router = express.Router();
-const home = require('../controllers/homeController');
-const about = require('../controllers/aboutController');
-const contact = require('../controllers/contactController');
+const ClientsController = require('../controllers/ClientsController');
 
-// Rota principal
-router.get('/', home.index);
-
-// Rota da página "Sobre"
-router.get('/sobre', about.index);
-
-// Rota da página "Contato"
-router.get('/contato', contact.index);
+// Rotas para o CRUD de tarefas
+router.post('/tarefas', ClientsController.createClient);
+router.get('/tarefas', ClientsController.listClients);
+router.put('/tarefas/:id', ClientsController.editClient);
+router.delete('/tarefas/:id', ClientsController.deleteClient);
 
 module.exports = router;
