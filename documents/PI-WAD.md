@@ -216,7 +216,7 @@ Representa as funcionalidades descritas no User Story 03.
 <sub align="center">Figura 4 - Tela de seleção de horários para Cliente  </sub>
 </div>
 <div align="center">
-<img src="/documents/assetsWAD/wireFrame_selecaoDeHorario.png" alt="wireFrame_selecaoDeHorario" border="0" width=100% height=100%>
+<img src="./assetsWAD/wireFrame_selecaoDeHorario.png" alt="wireFrame_selecaoDeHorario" border="0" width=100% height=100%>
 </div>
 <div align="center">
 <sup>Fonte: Victor Grycajuk, 2025.</sup>

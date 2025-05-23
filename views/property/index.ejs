@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Propriedades da Agência <%= agencyId %></title>
+  <style>
+    table { border-collapse: collapse; }
+    th, td { padding: .4rem .8rem; border: 1px solid #666; }
+    form.inline { display:inline; }
+  </style>
+</head>
+<body>
+
+  <!-- Navegação simples -->
+  <p><a href="/agencies">← Voltar para lista de agências</a></p>
+
+  <h1>Propriedades da Agência <%= agencyId %></h1>
+
+  <!-- LISTAGEM -->
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Endereço</th>
+        <th>Preço</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (properties.length === 0) { %>
+        <tr><td colspan="5">Nenhuma propriedade cadastrada.</td></tr>
+      <% } %>
+
+      <% properties.forEach(prop => { %>
+        <tr>
+          <td><%= prop.id %></td>
+          <td><%= prop.address %></td>
+          <td>R$ <%= prop.price.toLocaleString('pt-BR') %></td>
+          <td><%= prop.status %></td>
+          <td>
+            <!-- EXCLUIR -->
+            <form class="inline" action="/agencies/<%= agencyId %>/properties/delete/<%= prop.id %>" method="POST">
+              <button type="submit">Deletar</button>
+            </form>
+
+            <!-- EDITAR -->
+            <form class="inline" action="/agencies/<%= agencyId %>/properties/edit/<%= prop.id %>" method="POST">
+              <input name="address"  placeholder="Endereço" value="<%= prop.address %>" required>
+              <input name="price"    placeholder="Preço"    type="number" value="<%= prop.price %>" required>
+              <input name="status"   placeholder="Status"   value="<%= prop.status %>" required>
+              <button type="submit">Editar</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <!-- NOVA PROPRIEDADE -->
+  <h2>Cadastrar nova propriedade</h2>
+  <form action="/agencies/<%= agencyId %>/properties" method="POST">
+    <input name="address" placeholder="Endereço" required>
+    <input name="price"   placeholder="Preço (R$)" type="number" required>
+    <input name="status"  placeholder="Status (ex.: disponível)" required>
+    <button type="submit">Adicionar</button>
+  </form>
+
+</body>
+</html>

@@ -1,31 +1,32 @@
+// app.js
 const express = require('express');
-const app = express();
 const path = require('path');
-const alunosRoutes = require('./routes/alunos');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
+const agencyRoutes = require('./routes/agency');
+
+const app = express();
+
+// Engine e diretório das views
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
+// Middlewares para request body
+app.use(bodyParser.urlencoded({ extended: true }));  // <form method="POST">
+app.use(express.json());                             // JSON (fetch / axios)
 
-app.use('/alunos', alunosRoutes);
+// Arquivos estáticos (CSS, img etc.)
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-  res.redirect('/alunos');
-});
+// Rotas de domínio
+app.use('/agencies', agencyRoutes);
 
+// Redireciona raiz para listagem de agencies
+app.get('/', (_, res) => res.redirect('/agencies'));
+
+// Boot do servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
-
-const cursosRoutes = require('./routes/cursos');
-app.use('/cursos', cursosRoutes);
-
-
-const professoresRoutes = require('./routes/professores');
-app.use('/professores', professoresRoutes);
-
