@@ -1,5 +1,5 @@
 
-![ClickVisit](documents/assetsWAD/logoClickVisit.png) 
+![ClickVisit](documents/assetsWAD/logoClickVisitBranco.png) 
 ----
 Aplicação web para **agendamento de visitas a imóveis**. Corretores (autônomos ou vinculados a uma imobiliária) geram links de agendamento; clientes escolhem o melhor horário dentre a agenda do corretor e a disponibilidade do imóvel.
 
