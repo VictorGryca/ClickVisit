@@ -47,29 +47,24 @@ Fluxo resumido:
 ├── config/
 │   └── db.js            # conexão PostgreSQL
 ├── controllers/         # lógica de negócio (por entidade)
-│   ├── aboutController.js
-│   ├── alunoController.js
-│   ├── contactController.js
-│   ├── homeController.js
-│   └── userController.js
+│   ├── agencyController.js
+│   └── propertyController.js
 ├── documents/
 │   ├── assetsWAD/
 │   |   └── ...
 │   └── PI-WAD.md        # documentação acadêmica
 ├── models/              # mapeamento das tabelas (DAO)
-│   ├── aluno.js
-│   └── UserModel.js
+│   ├── agency.js
+│   └── property.js
 ├── node_modules/ 
 │   └── ...
 ├── public/              # CSS, JS e imgs servidos pelo Express
 │   └── ...
 ├── routes/
-│   ├── alunos.js        # exemplo de rota
-│   ├── frontRoutes.js   # rotas de views
-│   └── userRoutes.js
+│   ├── agency.js        # exemplo de rota
+│   └── property.js
 ├── scripts/
 │   ├── ClickVisit.sql   # schema completo do banco
-│   ├── init.sql
 │   └── runSQLScript.js  # utilitário para popular o BD
 ├── services/            # Serviços auxiliares do sistema
 │   └── userService.js
@@ -78,12 +73,17 @@ Fluxo resumido:
 │   ├── userModel.test.js
 │   ├── userRoutes.test.js
 │   └── userService.test.js
-├── views/  
+├── views/ 
+│   ├── agency/
+|   │   └── index.ejs
+|   ├── property/
+|   │   └── index.ejs
+|   └── ...
 ├── styles/              # Arquivos CSS públicos
-├── app.js               # app Express (rotas básicas)
+├── app.js               # app para rodar com NODE
 ├── server.js            # ponto de entrada — sobe o servidor
 ├── .env                 # variáveis de ambiente (DB, PORT…)
-├── package-lock.json    # Gerenciador de dependências do Node.js
+├── package-lock.json    # Gerenciador de dependências do Node.
 ├── package.json         # dependências e scripts npm
 └── readme.md            # Documentação do projeto (Markdown)
 ```
@@ -93,7 +93,7 @@ Fluxo resumido:
 1. **Clone o repositório**
 
    ```bash
-   git clone https://github.com/<seu-user>/<seu-repo>.git
+   git clone https://github.com/VictorGryca/ClickVisit.git
    cd <seu-repo>
    ```
 
@@ -105,7 +105,7 @@ Fluxo resumido:
 
 3. **Configure o ambiente**
 
-   Copie `.env` e preencha:
+   Crie o arquivo `.env` e preencha:
 
    ```env
    DB_HOST=<host>
@@ -122,10 +122,10 @@ Fluxo resumido:
    npm run init-db            # executa scripts/ClickVisit.sql
    ```
 
-5. **Inicie em modo de desenvolvimento**
+5. **Rode a aplicação**
 
    ```bash
-   npm run dev                # usa nodemon p/ hot-reload
+   node app.js               
    ```
 
    A aplicação estará em **[http://localhost:3000](http://localhost:3000)**.
