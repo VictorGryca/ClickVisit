@@ -1,14 +1,14 @@
-# ClickVisit
 
+![ClickVisit](documents/assetsWAD/logoClickVisit.png) 
+----
 Aplicação web para **agendamento de visitas a imóveis**. Corretores (autônomos ou vinculados a uma imobiliária) geram links de agendamento; clientes escolhem o melhor horário dentre a agenda do corretor e a disponibilidade do imóvel.
 
 ## Sumário
 
 1. [Descrição do sistema](#c1)  
-2. [Estrtura de pastas e arquivos](#c2)  
+2. [Estrutura de pastas e arquivos](#c2)  
 3. [Como executar o projeto localmente](#c3)  
-4. [](#c4)  
-5. [](#c5)  
+
 
 ## <a name="c1"></a>1. Descrição do sistema
 

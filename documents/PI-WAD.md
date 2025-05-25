@@ -1,8 +1,11 @@
 # Web Application Document
 
-## ClickVisit 📅
+
+![ClickVisit](./assetsWAD/logoClickVisit.png) 
 
 #### Victor Grycajuk
+----
+
 
 ## Sumário
 
@@ -48,7 +51,16 @@ Proporcionar uma experiência de agendamento prática, visual e organizada para 
 
 ### 2.1. Personas (Semana 01)
 
-![Persona](./assetsWAD/persona2.png)
+<div align="center">
+<sub align="center">Figura 1 - Persona  </sub>
+</div>
+<div align="center">
+<img src="./assetsWAD/persona2.png" alt="persona" border="0" width=100% height=100%>
+</div>
+<div align="center">
+<sup>Fonte: Victor Grycajuk, 2025.</sup>
+</div>
+
 
 ### 2.2. User Stories (Semana 01)
 
@@ -79,7 +91,15 @@ T - É fácil criar testes para verificar se o gerente consegue visualizar todas
 
 #### Diagrama de modelos relacionais
 
-![DiagramaBD](assetsWAD/dbdiagramClickVisit.png)
+<div align="center">
+<sub align="center">Figura 2 - Diagrama do banco de dados  </sub>
+</div>
+<div align="center">
+<img src="./assetsWAD/dbdiagramClickVisit.png" alt="diagramaBD" border="0" width=100% height=100%>
+</div>
+<div align="center">
+<sup>Fonte: Victor Grycajuk, 2025.</sup>
+</div>
 
 #### SQL completo
 
@@ -198,7 +218,7 @@ Representa as funcionalidades descritas no User Story 01.
 - US01: Como gerente da imobiliária, quero visualizar e controlar as agendas de todos os imóveis e corretores, para garantir que as visitas sejam organizadas sem conflitos de horários.
 
 <div align="center">
-<sub align="center">Figura 3 - Tela de consulta de imóveis para Imobiliária  </sub>
+<sub align="center">Figura 4 - Tela de consulta de imóveis para Imobiliária  </sub>
 </div>
 <div align="center">
 <img src="./assetsWAD/wireFrame_consultaDeImoveis.png" alt="wireFrame_consultaDeImoveis" border="0" width=100% height=100%>
@@ -212,7 +232,7 @@ Representa as funcionalidades descritas no User Story 03.
 - US03: Como cliente interessado em um imóvel, quero acessar um link e agendar uma visita em poucos cliques, para escolher o melhor horário disponível sem depender de intermediários.
 
 <div align="center">
-<sub align="center">Figura 4 - Tela de seleção de horários para Cliente  </sub>
+<sub align="center">Figura 5 - Tela de seleção de horários para Cliente  </sub>
 </div>
 <div align="center">
 <img src="./assetsWAD/wireFrame_selecaoDeHorario.png" alt="wireFrame_selecaoDeHorario" border="0" width=100% height=100%>
@@ -225,12 +245,31 @@ Representa as funcionalidades descritas no User Story 03.
 
 ### 3.4. Guia de estilos (Semana 05)
 
-*Descreva aqui orientações gerais para o leitor sobre como utilizar os componentes do guia de estilos de sua solução.*
+<div align="center">
+<sub align="center">Figura 6 - Guia de estilos  </sub>
+</div>
+<div align="center">
+<img src="./assetsWAD/guiaDeEstilosClickVisit.png" alt="guiaDeEstilos" border="0" width=100% height=100%>
+</div>
+<div align="center">
+<sup>Fonte: Victor Grycajuk, 2025.</sup>
+</div>
+
 
 
 ### 3.5. Protótipo de alta fidelidade (Semana 05)
 
-*Posicione aqui algumas imagens demonstrativas de seu protótipo de alta fidelidade e o link para acesso ao protótipo completo (mantenha o link sempre público para visualização).*
+<div align="center">
+<sub align="center">Figura 7 - Portótipo de Alta Fidelidade  </sub>
+</div>
+<div align="center">
+<img src="./assetsWAD/prototipoDeAltaFidelidadeClickVisit.png" alt="prototipoDeAltaFidelidade" border="0" width=100% height=100%>
+</div>
+<div align="center">
+<sup>Fonte: Victor Grycajuk, 2025.</sup>
+</div>
+
+#### Este é o primeiro protótipo de alta fidelidade do ClickVisit. Esta tela representa a principal tela do usuáro, onde ele conseguirá agenda o horário ideal. Esta tela supre as necessidades do User Story 03.
 
 ### 3.6. WebAPI e endpoints (Semana 05)
 
