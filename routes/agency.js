@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/alunoController');
+const controller = require('../controllers/agencyController');
+
+const propRoutes = require('./property');
+router.use('/:agencyId/properties', propRoutes);
 
 router.get('/', controller.index);
 router.post('/', controller.store);
 router.post('/edit/:id', controller.update);
 router.post('/delete/:id', controller.destroy);
-router.get('/curso/:curso_id', controller.byCurso);
+
 
 module.exports = router;

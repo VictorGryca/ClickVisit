@@ -79,7 +79,7 @@ T - É fácil criar testes para verificar se o gerente consegue visualizar todas
 
 #### Diagrama de modelos relacionais
 
-![DiagramaBD](assetsWAD/diagramaBD.png)
+![DiagramaBD](assetsWAD/dbdiagramClickVisit.png)
 
 #### SQL completo
 
@@ -88,110 +88,109 @@ Disponível em [`ClickVisit.sql`](../scripts/ClickVisit.sql), ou
   <summary>Clique para expandir</summary>
 
 ```sql
-CREATE TABLE "agencies"(
-    "id" UUID NOT NULL,
-    "name" TEXT NOT NULL,
-    "created_at" TIMESTAMP(0) WITH
-        TIME zone NOT NULL DEFAULT 'now()'
+CREATE TABLE "agencies" (
+  "id" INTEGER PRIMARY KEY NOT NULL,
+  "name" TEXT NOT NULL
 );
-ALTER TABLE
-    "agencies" ADD PRIMARY KEY("id");
 
-CREATE TABLE "brokers"(
-    "id" UUID NOT NULL,
-    "user_id" UUID NOT NULL,
-    "agency_id" UUID NOT NULL,
-    "creci" TEXT NOT NULL,
-    "phone" TEXT NOT NULL
+CREATE TABLE "brokers" (
+  "id" INTEGER PRIMARY KEY NOT NULL,
+  "agency_id" INTEGER NOT NULL,
+  "name" TEXT NOT NULL,
+  "email" TEXT NOT NULL,
+  "phone" TEXT NOT NULL,
+  "creci" TEXT NOT NULL
 );
-ALTER TABLE
-    "brokers" ADD PRIMARY KEY("id");
 
-CREATE TABLE "properties"(
-    "id" UUID NOT NULL,
-    "agency_id" UUID NOT NULL,
-    "address" TEXT NOT NULL,
-    "price" INTEGER NOT NULL,
-    "status" TEXT NOT NULL
+CREATE TABLE "properties" (
+  "id" INTEGER PRIMARY KEY NOT NULL,
+  "agency_id" INTEGER NOT NULL,
+  "address" TEXT NOT NULL,
+  "price" INTEGER NOT NULL,
+  "status" TEXT NOT NULL
 );
-ALTER TABLE
-    "properties" ADD PRIMARY KEY("id");
 
-CREATE TABLE "events"(
-    "id" UUID NOT NULL,
-    "event_type" TEXT NOT NULL,
-    "broker_id" UUID NOT NULL,
-    "property_id" UUID NOT NULL,
-    "starts_at" TIMESTAMP(0) WITH
-        TIME zone NOT NULL,
-        "ends_at" TIMESTAMP(0)
-    WITH
-        TIME zone NOT NULL,
-        "created_by" UUID NOT NULL
+CREATE TABLE "events" (
+  "id" INTEGER PRIMARY KEY NOT NULL,
+  "event_type" TEXT NOT NULL,
+  "property_id" INTEGER NOT NULL,
+  "starts_at" TIMESTAMP(0) NOT NULL,
+  "ends_at" TIMESTAMP(0) NOT NULL,
+  "description" TEXT
 );
-ALTER TABLE
-    "events" ADD PRIMARY KEY("id");
-COMMENT
-ON COLUMN
-    "events"."event_type" IS '"block","maintenance"';
-CREATE TABLE "clients"(
-    "id" UUID NOT NULL,
-    "name" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "phone" TEXT NOT NULL
+
+CREATE TABLE "clients" (
+  "id" INTEGER PRIMARY KEY NOT NULL,
+  "name" TEXT NOT NULL,
+  "email" TEXT NOT NULL,
+  "phone" TEXT NOT NULL
 );
-ALTER TABLE
-    "clients" ADD PRIMARY KEY("id");
-    
-CREATE TABLE "visits"(
-    "id" UUID NOT NULL,
-    "client_id" UUID NOT NULL,
-    "broker_id" UUID NOT NULL,
-    "property_id" UUID NOT NULL,
-    "starts_at" TIMESTAMP(0) WITH
-        TIME zone NOT NULL,
-        "ends_at" TIMESTAMP(0)
-    WITH
-        TIME zone NOT NULL,
-        "status" TEXT NOT NULL
+
+CREATE TABLE "visits" (
+  "id" INTEGER PRIMARY KEY NOT NULL,
+  "client_id" INTEGER NOT NULL,
+  "broker_id" INTEGER NOT NULL,
+  "property_id" INTEGER NOT NULL,
+  "starts_at" TIMESTAMP(0) NOT NULL,
+  "ends_at" TIMESTAMP(0) NOT NULL,
+  "status" TEXT NOT NULL
 );
-ALTER TABLE
-    "visits" ADD PRIMARY KEY("id");
-COMMENT
-ON COLUMN
-    "visits"."status" IS '"confirmed", "canceled"';
-ALTER TABLE
-    "events" ADD CONSTRAINT "events_broker_id_foreign" FOREIGN KEY("broker_id") REFERENCES "brokers"("id");
-ALTER TABLE
-    "brokers" ADD CONSTRAINT "brokers_agency_id_foreign" FOREIGN KEY("agency_id") REFERENCES "agencies"("id");
-ALTER TABLE
-    "events" ADD CONSTRAINT "events_property_id_foreign" FOREIGN KEY("property_id") REFERENCES "properties"("id");
-ALTER TABLE
-    "visits" ADD CONSTRAINT "visits_property_id_foreign" FOREIGN KEY("property_id") REFERENCES "properties"("id");
-ALTER TABLE
-    "visits" ADD CONSTRAINT "visits_broker_id_foreign" FOREIGN KEY("broker_id") REFERENCES "brokers"("id");
-ALTER TABLE
-    "properties" ADD CONSTRAINT "properties_agency_id_foreign" FOREIGN KEY("agency_id") REFERENCES "agencies"("id");
-ALTER TABLE
-    "visits" ADD CONSTRAINT "visits_client_id_foreign" FOREIGN KEY("client_id") REFERENCES "clients"("id");
+
+COMMENT ON COLUMN "events"."event_type" IS '"Available","maintenance"';
+
+COMMENT ON COLUMN "visits"."status" IS '"confirmed", "canceled"';
+
+ALTER TABLE "brokers" ADD CONSTRAINT "brokers_agency_id_foreign" FOREIGN KEY ("agency_id") REFERENCES "agencies" ("id");
+
+ALTER TABLE "events" ADD CONSTRAINT "events_property_id_foreign" FOREIGN KEY ("property_id") REFERENCES "properties" ("id");
+
+ALTER TABLE "visits" ADD CONSTRAINT "visits_property_id_foreign" FOREIGN KEY ("property_id") REFERENCES "properties" ("id");
+
+ALTER TABLE "visits" ADD CONSTRAINT "visits_broker_id_foreign" FOREIGN KEY ("broker_id") REFERENCES "brokers" ("id");
+
+ALTER TABLE "properties" ADD CONSTRAINT "properties_agency_id_foreign" FOREIGN KEY ("agency_id") REFERENCES "agencies" ("id");
+
+ALTER TABLE "visits" ADD CONSTRAINT "visits_client_id_foreign" FOREIGN KEY ("client_id") REFERENCES "clients" ("id");
+
 
 ```
 </details>
 
 ### 3.1.1 BD e Models (Semana 5)
-*Descreva aqui os Models implementados no sistema web*
+#### Os models implementados até o momento, 24/05/2025 são:
+#### agency.js - disponível em [`models/agency.js`](../models/agency.js)
 
+    Realiza as manipulações no banco de dados referentes as agencias imobiliárias.
+        create() - 'INSERT INTO agencies (name) VALUES ($1)'
+        findAll() - 'SELECT * FROM agencies ORDER BY name ASC'
+        update() - 'UPDATE agencies SET name = $1 WHERE id = $2'
+        delete() - 'DELETE FROM agencies WHERE id = $1'
+
+#### property.js - disponível em [`models/property.js`](../models/property.js)
+    
+    Realiza as manipulações no banco de dados referentes as propriedades de uma agencia imobiliaria especifica.
+        create() - 'INSERT INTO properties (agency_id, address, price, status) VALUES ($1,$2,$3,$4)'
+        findAll() - 'SELECT * FROM properties WHERE agency_id=$1 ORDER BY id'
+        update() - 'UPDATE properties SET address=$1, price=$2, status=$3 WHERE id=$4'
+        delete() - 'DELETE FROM properties WHERE id=$1'
 ### 3.2. Arquitetura (Semana 5)
 
-*Posicione aqui o diagrama de arquitetura da sua solução de aplicação web. Atualize sempre que necessário.*
+#### O seguinte diagrama representa a arquitetura MVC do ClickVisit
+<div align="center">
+<sub align="center">Figura 3 - Diagrama de arquitetura MVC.  </sub>
+</div>
+<div align="center">
+<img src="./assetsWAD/arquiteturaMermaidClickVisit.png" alt="arquiteturaMVC" border="0" width=100% height=100%>
+</div>
+<div align="center">
+<sup>Fonte: Victor Grycajuk usando Mermaid.io, 2025.</sup>
+</div>
 
-**Instruções para criação do diagrama de arquitetura**  
-- **Model**: A camada que lida com a lógica de negócios e interage com o banco de dados.
-- **View**: A camada responsável pela interface de usuário.
-- **Controller**: A camada que recebe as requisições, processa as ações e atualiza o modelo e a visualização.
-  
-*Adicione as setas e explicações sobre como os dados fluem entre o Model, Controller e View.*
+#### Até o momento, 24/05/2025, os conjuntos MVC implementados são: 
+    AgencyView -> AgencyRoutes -> AgencyController -> AgencyModel
+    PropertiesView -> PropertiesRoutes -> PropertiesController -> PropertiesModel 
 
+#### Os conjuntos MVC restantes: Brokers, Clients, Events e Visits ainda estão sendo implementados.
 ### 3.3. Wireframes (Semana 03)
 
 #### Consulta de imóveis para Imobiliária
@@ -216,7 +215,7 @@ Representa as funcionalidades descritas no User Story 03.
 <sub align="center">Figura 4 - Tela de seleção de horários para Cliente  </sub>
 </div>
 <div align="center">
-<img src="/documents/assetsWAD/wireFrame_selecaoDeHorario.png" alt="wireFrame_selecaoDeHorario" border="0" width=100% height=100%>
+<img src="./assetsWAD/wireFrame_selecaoDeHorario.png" alt="wireFrame_selecaoDeHorario" border="0" width=100% height=100%>
 </div>
 <div align="center">
 <sup>Fonte: Victor Grycajuk, 2025.</sup>
@@ -235,7 +234,28 @@ Representa as funcionalidades descritas no User Story 03.
 
 ### 3.6. WebAPI e endpoints (Semana 05)
 
-*Utilize um link para outra página de documentação contendo a descrição completa de cada endpoint. Ou descreva aqui cada endpoint criado para seu sistema.*  
+### Agências
+
+| Método | Caminho                | Descrição                             | Controller                 |
+| ------ | ---------------------- | ------------------------------------- | -------------------------- |
+| GET    | `/agencies/`           | Lista todas as agências               | `agencyController.index`   |
+| POST   | `/agencies/`           | Cria uma nova agência                 | `agencyController.store`   |
+| POST   | `/agencies/edit/:id`   | Atualiza a agência indicada por `:id` | `agencyController.update`  |
+| POST   | `/agencies/delete/:id` | Remove a agência indicada por `:id`   | `agencyController.destroy` |
+
+---
+
+### Imóveis (aninhados em `/agencies/:agencyId/properties`)
+
+| Método | Caminho       | Descrição                                 | Controller                   |
+| ------ | ------------- | ----------------------------------------- | ---------------------------- |
+| GET    | `/`           | Lista os imóveis da agência (`:agencyId`) | `propertyController.index`   |
+| POST   | `/`           | Cria um imóvel para a agência             | `propertyController.store`   |
+| POST   | `/edit/:id`   | Atualiza o imóvel `:id` dessa agência     | `propertyController.update`  |
+| POST   | `/delete/:id` | Remove o imóvel `:id` dessa agência       | `propertyController.destroy` |
+
+---
+
 
 ### 3.7 Interface e Navegação (Semana 07)
 
