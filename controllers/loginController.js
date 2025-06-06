@@ -27,7 +27,10 @@ exports.loginUser = async (req, res) => {
     // Tente todos os campos possíveis
     const userType = (user.user_type || user.type || user.role || user.perfil || '').trim().toLowerCase();
 
-    if (userType === 'agency' || userType === 'agencie') {
+    if (userType === 'admin') {
+      // Redireciona para a tela de admin
+      return res.redirect('/admin');
+    } else if (userType === 'agency' || userType === 'agencie') {
       // Busca a agência vinculada ao login_id
       const agencyRes = await db.query('SELECT id FROM agencies WHERE login_id = $1', [user.id]);
       const agency = agencyRes.rows[0];
