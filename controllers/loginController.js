@@ -1,5 +1,5 @@
 // controllers/loginController.js
-const pool = require('../config/db');
+const db = require('../config/db');
 
 // Login handler
 exports.loginUser = async (req, res) => {
@@ -8,24 +8,42 @@ exports.loginUser = async (req, res) => {
   console.log(req.body);
 
   // SQL query to find user by email and password
-  const query = 'SELECT * FROM "Login" WHERE user_email = $1 AND password = $2';
+  const query = 'SELECT * FROM login WHERE email = $1 AND password = $2';
   const values = [user_email, password];
 
   try {
     // Execute the query
-    const result = await pool.query(query, values);
+    const result = await db.query(query, values);
     const user = result.rows[0];
 
-    if (user) {
-      // If user is found, store login ID in session and redirect
-      req.session.userId = user.login_id;
-      res.redirect('/welcome');
+    if (!user) {
+      console.log('Login falhou para:', user_email);
+      return res.send('Email ou senha inválidos.');
+    }
+
+    // Debug: veja o que vem do banco ANTES de qualquer return
+    console.log('Usuário retornado do banco:', user);
+
+    // Tente todos os campos possíveis
+    const userType = (user.user_type || user.type || user.role || user.perfil || '').trim().toLowerCase();
+
+    if (userType === 'agency' || userType === 'agencie') {
+      return res.redirect('/agencies');
+    } else if (userType === 'broker') {
+      const brokerRes = await db.query('SELECT id FROM brokers WHERE login_id = $1', [user.id]);
+      const broker = brokerRes.rows[0];
+      if (broker) {
+        return res.redirect(`/brokers/${broker.id}`);
+      } else {
+        return res.send('Corretor não encontrado para este login.');
+      }
     } else {
-      // If no user found, send invalid credentials message
-      res.send('Invalid email or password.');
+      console.log('Tipo de usuário não suportado:', userType);
+      return res.send('Tipo de usuário não suportado. Valor recebido: ' + userType);
     }
   } catch (err) {
+    console.error('Erro no login:', err);
     // Return 500 in case of database or server error
     res.status(500).json({ error: err.message });
   }
-}
+};

@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const agencyRoutes = require('./routes/agency');
+const loginRoutes = require('./routes/login');
+const db = require('./config/db');
 
 const app = express();
 
@@ -21,9 +23,44 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Rotas de domínio
 app.use('/agencies', agencyRoutes);
+app.use('/login', loginRoutes);
 
-// Redireciona raiz para listagem de agencies
-app.get('/', (_, res) => res.redirect('/agencies'));
+// Redireciona raiz para tela de login
+app.get('/', (req, res) => res.redirect('/login'));
+
+// Exemplo de rota para brokers (placeholder, crie o controller/rota depois)
+app.get('/brokers/:id', async (req, res) => {
+  const brokerId = req.params.id;
+  try {
+    // Busca informações básicas do corretor
+    const brokerResult = await db.query(
+      'SELECT id, name, email, phone, creci FROM brokers WHERE id = $1',
+      [brokerId]
+    );
+    const broker = brokerResult.rows[0];
+
+    if (!broker) {
+      return res.status(404).send('Corretor não encontrado.');
+    }
+
+    // Busca visitas agendadas para o corretor
+    const visitsResult = await db.query(
+      `SELECT v.id, v.starts_at, v.ends_at, v.status, 
+              p.address AS property_address, c.name AS client_name
+         FROM visits v
+         JOIN properties p ON v.property_id = p.id
+         JOIN clients c ON v.client_id = c.id
+        WHERE v.broker_id = $1
+        ORDER BY v.starts_at DESC`,
+      [brokerId]
+    );
+    const visits = visitsResult.rows;
+
+    res.render('brokers/profile', { broker, visits });
+  } catch (err) {
+    res.status(500).send('Erro ao buscar dados do corretor.');
+  }
+});
 
 // Boot do servidor
 const PORT = process.env.PORT || 3000;
