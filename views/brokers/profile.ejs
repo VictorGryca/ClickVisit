@@ -9,13 +9,30 @@
     <a href="/logout"><button>Logout</button></a>
   </div>
   <h1>Perfil do Corretor</h1>
-  <ul>
-    <li><strong>ID:</strong> <%= broker.id %></li>
-    <li><strong>Nome:</strong> <%= broker.name %></li>
-    <li><strong>Email:</strong> <%= broker.email %></li>
-    <li><strong>Telefone:</strong> <%= broker.phone %></li>
-    <li><strong>CRECI:</strong> <%= broker.creci %></li>
-  </ul>
+  <form action="/brokers/<%= broker.id %>/edit" method="POST">
+    <ul>
+      <li>
+        <strong>ID:</strong> <%= broker.id %>
+      </li>
+      <li>
+        <strong>Nome:</strong>
+        <input type="text" name="name" value="<%= broker.name %>" required>
+      </li>
+      <li>
+        <strong>Email:</strong>
+        <input type="email" name="email" value="<%= broker.email %>" required>
+      </li>
+      <li>
+        <strong>Telefone:</strong>
+        <input type="text" name="phone" value="<%= broker.phone %>" required>
+      </li>
+      <li>
+        <strong>CRECI:</strong>
+        <input type="text" name="creci" value="<%= broker.creci %>" required>
+      </li>
+    </ul>
+    <button type="submit">Salvar Alterações</button>
+  </form>
   <a href="/brokers/<%= broker.id %>/visits">
     <button>Ver Visitas Agendadas</button>
   </a>

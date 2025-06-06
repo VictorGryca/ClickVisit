@@ -13,6 +13,13 @@
   <div style="text-align:right;">
     <a href="/logout"><button>Logout</button></a>
   </div>
+
+  <% if (typeof isAdmin !== 'undefined' && isAdmin) { %>
+    <p>
+      <a href="/admin"><button>Voltar para lista de Agências</button></a>
+    </p>
+  <% } %>
+
   <h1>Propriedades da Agência <%= agencyName %></h1>
   <table>
     <thead>

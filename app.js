@@ -24,7 +24,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Rotas de domínio
 app.use('/admin', adminRoutes);
-// Corrija para aceitar rotas aninhadas de propriedades da agency
+// Mova esta rota para ANTES de app.use('/agencies/:agencyId/properties', agencyRoutes);
+// para garantir que ela não seja "capturada" por rotas dinâmicas acima.
+app.post('/brokers/:id/edit', async (req, res) => {
+  const brokerId = req.params.id;
+  const { name, email, phone, creci } = req.body;
+  try {
+    await db.query(
+      'UPDATE brokers SET name = $1, email = $2, phone = $3, creci = $4 WHERE id = $5',
+      [name, email, phone, creci, brokerId]
+    );
+    res.redirect(`/brokers/${brokerId}`);
+  } catch (err) {
+    res.status(500).send('Erro ao atualizar dados do corretor.');
+  }
+});
 app.use('/agencies/:agencyId/properties', agencyRoutes);
 app.use('/login', loginRoutes);
 
