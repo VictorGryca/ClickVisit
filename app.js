@@ -28,13 +28,33 @@ app.use('/login', loginRoutes);
 // Redireciona raiz para tela de login
 app.get('/', (req, res) => res.redirect('/login'));
 
-// Exemplo de rota para brokers (placeholder, crie o controller/rota depois)
+// Tela de informações básicas do corretor
 app.get('/brokers/:id', async (req, res) => {
   const brokerId = req.params.id;
   try {
-    // Busca informações básicas do corretor
     const brokerResult = await db.query(
       'SELECT id, name, email, phone, creci FROM brokers WHERE id = $1',
+      [brokerId]
+    );
+    const broker = brokerResult.rows[0];
+
+    if (!broker) {
+      return res.status(404).send('Corretor não encontrado.');
+    }
+
+    res.render('brokers/profile', { broker });
+  } catch (err) {
+    res.status(500).send('Erro ao buscar dados do corretor.');
+  }
+});
+
+// Tela de visitas agendadas do corretor
+app.get('/brokers/:id/visits', async (req, res) => {
+  const brokerId = req.params.id;
+  try {
+    // Busca informações básicas do corretor (para exibir nome/cabeçalho)
+    const brokerResult = await db.query(
+      'SELECT id, name FROM brokers WHERE id = $1',
       [brokerId]
     );
     const broker = brokerResult.rows[0];
@@ -56,9 +76,9 @@ app.get('/brokers/:id', async (req, res) => {
     );
     const visits = visitsResult.rows;
 
-    res.render('brokers/profile', { broker, visits });
+    res.render('brokers/visits', { broker, visits });
   } catch (err) {
-    res.status(500).send('Erro ao buscar dados do corretor.');
+    res.status(500).send('Erro ao buscar visitas do corretor.');
   }
 });
 

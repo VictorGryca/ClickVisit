@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Visitas do Corretor <%= broker.name %></title>
+  <style>
+    table { border-collapse: collapse; }
+    th, td { padding: .4rem .8rem; border: 1px solid #666; }
+  </style>
+</head>
+<body>
+  <h1>Visitas Agendadas - <%= broker.name %></h1>
+  <a href="/brokers/<%= broker.id %>">
+    <button>Ver Perfil</button>
+  </a>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Imóvel</th>
+        <th>Cliente</th>
+        <th>Início</th>
+        <th>Fim</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (visits.length === 0) { %>
+        <tr><td colspan="6">Nenhuma visita agendada.</td></tr>
+      <% } %>
+      <% visits.forEach(v => { %>
+        <tr>
+          <td><%= v.id %></td>
+          <td><%= v.property_address %></td>
+          <td><%= v.client_name %></td>
+          <td><%= v.starts_at.toLocaleString('pt-BR') %></td>
+          <td><%= v.ends_at.toLocaleString('pt-BR') %></td>
+          <td><%= v.status %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>
