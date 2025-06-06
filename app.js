@@ -82,6 +82,12 @@ app.get('/brokers/:id/visits', async (req, res) => {
   }
 });
 
+// Rota de logout (simples, sem session)
+app.get('/logout', (req, res) => {
+  // Se usar session: req.session.destroy();
+  res.redirect('/login');
+});
+
 // Boot do servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
