@@ -4,6 +4,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
+const adminRoutes = require('./routes/admin');
 const agencyRoutes = require('./routes/agency');
 const loginRoutes = require('./routes/login');
 const db = require('./config/db');
@@ -22,7 +23,9 @@ app.use(express.json());                             // JSON (fetch / axios)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Rotas de domínio
-app.use('/agencies', agencyRoutes);
+app.use('/admin', adminRoutes);
+// Corrija para aceitar rotas aninhadas de propriedades da agency
+app.use('/agencies/:agencyId/properties', agencyRoutes);
 app.use('/login', loginRoutes);
 
 // Redireciona raiz para tela de login

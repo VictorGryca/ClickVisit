@@ -1,19 +1,23 @@
 // controllers/agencyController.js
 const Agency = require('../models/agency');
+const Property = require('../models/property');
 
 exports.index = async (req, res, next) => {
+  const { agencyId } = req.params;
   try {
-    const agencies = await Agency.findAll();       // OK
-    res.render('agency/index', { agencies });      // passa "agencies" para a view
+    const agencyResult = await require('../config/db').query('SELECT name FROM agencies WHERE id = $1', [agencyId]);
+    const agencyName = agencyResult.rows[0] ? agencyResult.rows[0].name : agencyId;
+    const properties = await Property.findAll(agencyId);
+    res.render('agency/index', { agencyId, agencyName, properties });
   } catch (err) {
-    next(err); // deixa o Express tratar se algo der errado
+    next(err);
   }
 };
 
 exports.store = async (req, res, next) => {
   try {
-    await Agency.create(req.body);
-    res.redirect('/agencies');
+    await Property.create(req.params.agencyId, req.body);
+    res.redirect(`/agencies/${req.params.agencyId}/properties`);
   } catch (err) {
     next(err);
   }
@@ -21,9 +25,8 @@ exports.store = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    await Agency.update(id, req.body);
-    res.redirect('/agencies');
+    await Property.update(req.params.id, req.body);
+    res.redirect(`/agencies/${req.params.agencyId}/properties`);
   } catch (err) {
     next(err);
   }
@@ -31,9 +34,8 @@ exports.update = async (req, res, next) => {
 
 exports.destroy = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    await Agency.delete(id);
-    res.redirect('/agencies');
+    await Property.delete(req.params.id);
+    res.redirect(`/agencies/${req.params.agencyId}/properties`);
   } catch (err) {
     next(err);
   }
