@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Propriedades da Agência <%= agencyId %></title>
+  <title>Propriedades da Agência <%= agencyName %></title>
   <style>
     table { border-collapse: collapse; }
     th, td { padding: .4rem .8rem; border: 1px solid #666; }
@@ -10,14 +10,14 @@
   </style>
 </head>
 <body>
+
   <div style="text-align:right;">
     <a href="/logout"><button>Logout</button></a>
   </div>
 
-  <!-- Remova ou comente o link de voltar para lista de agências -->
-  <!-- <p><a href="/agencies">← Voltar para lista de agências</a></p> -->
+  <!-- Removido o link para lista de agências -->
 
-  <h1>Propriedades da Agência <%= agencyId %></h1>
+  <h1>Propriedades da Agência <%= agencyName %></h1>
 
   <!-- LISTAGEM -->
   <table>
