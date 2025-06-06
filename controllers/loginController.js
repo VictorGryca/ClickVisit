@@ -28,7 +28,15 @@ exports.loginUser = async (req, res) => {
     const userType = (user.user_type || user.type || user.role || user.perfil || '').trim().toLowerCase();
 
     if (userType === 'agency' || userType === 'agencie') {
-      return res.redirect('/agencies');
+      // Busca a agência vinculada ao login_id
+      const agencyRes = await db.query('SELECT id FROM agencies WHERE login_id = $1', [user.id]);
+      const agency = agencyRes.rows[0];
+      if (agency) {
+        // Redireciona para a tela de imóveis da agência específica
+        return res.redirect(`/agencies/${agency.id}/properties`);
+      } else {
+        return res.send('Agência não encontrada para este login.');
+      }
     } else if (userType === 'broker') {
       const brokerRes = await db.query('SELECT id FROM brokers WHERE login_id = $1', [user.id]);
       const broker = brokerRes.rows[0];
