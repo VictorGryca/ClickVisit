@@ -27,14 +27,14 @@
         <th>Endereço</th>
         <th>Preço</th>
         <th>Status</th>
+        <th>Brokers</th>
         <th>Ações</th>
       </tr>
     </thead>
     <tbody>
       <% if (properties.length === 0) { %>
-        <tr><td colspan="5">Nenhuma propriedade cadastrada.</td></tr>
+        <tr><td colspan="6">Nenhuma propriedade cadastrada.</td></tr>
       <% } %>
-
       <% properties.forEach(prop => { %>
         <tr>
           <td><%= prop.id %></td>
@@ -42,11 +42,42 @@
           <td>R$ <%= prop.price.toLocaleString('pt-BR') %></td>
           <td><%= prop.status %></td>
           <td>
+            <!-- Brokers vinculados -->
+            <div>
+              <strong>Brokers:</strong>
+              <ul style="margin:0; padding-left:1em;">
+                <% if (prop.brokers && prop.brokers.length > 0) { %>
+                  <% prop.brokers.forEach(b => { %>
+                    <li>
+                      <%= b.name %>
+                      <form action="/agencies/<%= agencyId %>/properties/<%= prop.id %>/remove-broker/<%= b.id %>" method="POST" style="display:inline;">
+                        <button type="submit" style="font-size:0.8em;">Remover</button>
+                      </form>
+                    </li>
+                  <% }) %>
+                <% } else { %>
+                  <li>Nenhum broker vinculado</li>
+                <% } %>
+              </ul>
+            </div>
+            <!-- Adicionar broker (dropdown) -->
+            <form action="/agencies/<%= agencyId %>/properties/<%= prop.id %>/add-broker" method="POST" style="margin-top:0.5em;">
+              <select name="broker_id" required>
+                <option value="">Selecionar broker...</option>
+                <% allBrokers.forEach(b => { %>
+                  <% if (!prop.brokers.some(pb => pb.id === b.id)) { %>
+                    <option value="<%= b.id %>"><%= b.name %></option>
+                  <% } %>
+                <% }) %>
+              </select>
+              <button type="submit">Adicionar</button>
+            </form>
+          </td>
+          <td>
             <!-- EXCLUIR -->
             <form class="inline" action="/agencies/<%= agencyId %>/properties/delete/<%= prop.id %>" method="POST">
               <button type="submit">Deletar</button>
             </form>
-
             <!-- EDITAR -->
             <form class="inline" action="/agencies/<%= agencyId %>/properties/edit/<%= prop.id %>" method="POST">
               <input name="address"  placeholder="Endereço" value="<%= prop.address %>" required>

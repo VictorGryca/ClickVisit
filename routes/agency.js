@@ -8,4 +8,8 @@ router.post('/', ctrl.store);
 router.post('/edit/:id', ctrl.update);
 router.post('/delete/:id', ctrl.destroy);
 
+// Novas rotas para brokers em propriedades
+router.post('/:propertyId/add-broker', ctrl.addBroker);
+router.post('/:propertyId/remove-broker/:brokerId', ctrl.removeBroker);
+
 module.exports = router;
