@@ -11,7 +11,7 @@
     .calendar-day { cursor: pointer; }
     .calendar-day.has-availability { background: #d4ffd4; }
     .calendar-day.today { border: 2px solid #007bff; }
-    .calendar-day.selected { background: #b3d7ff; }
+    .calendar-day.selected { background: #b3d7ff !important; border: 2px solid #007bff; }
     .calendar-day:hover { background: #f0f8ff; }
   </style>
   <script>
@@ -61,7 +61,9 @@
         <tr>
         <% for (let dow = 0; dow < 7; dow++) { 
           const cellDate = new Date(currentYear, currentMonth - 1, day);
-          const isToday = (cellDate.toISOString().slice(0,10) === todayStr);
+          const cellDateStr = cellDate.toISOString().slice(0,10);
+          const isToday = (cellDateStr === todayStr);
+          const isSelected = (cellDateStr === selectedDay);
           const isThisMonth = (week > 0 || dow >= firstDayOfWeek) && day <= daysInMonth;
           let hasAvail = false;
           let availsForDay = [];
@@ -76,10 +78,11 @@
           <td class="calendar-day
             <% if (isThisMonth) { %>
               <% if (isToday) { %> today<% } %>
+              <% if (isSelected) { %> selected<% } %>
               <% if (hasAvail) { %> has-availability<% } %>
             <% } %>"
             <% if (isThisMonth) { %>
-              onclick="selectDay('<%= cellDate.toISOString().slice(0,10) %>')"
+              onclick="selectDay('<%= cellDateStr %>')"
               title="Clique para adicionar disponibilidade"
             <% } %>
           >
@@ -97,6 +100,9 @@
                     </div>
                   <% }) %>
                 </div>
+              <% } %>
+              <% if (isSelected) { %>
+                <div style="margin-top:0.2em; color:#007bff; font-size:0.85em; font-weight:bold;">Selecionado</div>
               <% } %>
             <% } %>
           </td>
