@@ -1,5 +1,5 @@
 // controllers/loginController.js
-const db = require('../config/db');
+const Login = require('../models/login');
 
 // Login handler
 exports.loginUser = async (req, res) => {
@@ -7,14 +7,9 @@ exports.loginUser = async (req, res) => {
   const { user_email, password } = req.body;
   console.log(req.body);
 
-  // SQL query to find user by email and password
-  const query = 'SELECT * FROM login WHERE email = $1 AND password = $2';
-  const values = [user_email, password];
-
   try {
-    // Execute the query
-    const result = await db.query(query, values);
-    const user = result.rows[0];
+    // Find user by email and password
+    const user = await Login.findByEmailAndPassword(user_email, password);
 
     if (!user) {
       console.log('Login falhou para:', user_email);
@@ -32,8 +27,7 @@ exports.loginUser = async (req, res) => {
       return res.redirect('/admin');
     } else if (userType === 'agency' || userType === 'agencie') {
       // Busca a agência vinculada ao login_id
-      const agencyRes = await db.query('SELECT id FROM agencies WHERE login_id = $1', [user.id]);
-      const agency = agencyRes.rows[0];
+      const agency = await Login.findAgencyByLoginId(user.id);
       if (agency) {
         // Redireciona para a tela de imóveis da agência específica
         return res.redirect(`/agencies/${agency.id}/properties`);
@@ -41,8 +35,7 @@ exports.loginUser = async (req, res) => {
         return res.send('Agência não encontrada para este login.');
       }
     } else if (userType === 'broker') {
-      const brokerRes = await db.query('SELECT id FROM brokers WHERE login_id = $1', [user.id]);
-      const broker = brokerRes.rows[0];
+      const broker = await Login.findBrokerByLoginId(user.id);
       if (broker) {
         return res.redirect(`/brokers/${broker.id}`);
       } else {
