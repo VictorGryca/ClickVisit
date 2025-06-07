@@ -1,14 +1,11 @@
 const express = require('express');
-const router = express.Router();
-const controller = require('../controllers/agencyController');
+const router = express.Router({ mergeParams: true });
+const ctrl = require('../controllers/propertyController');
 
-const propRoutes = require('./property');
-router.use('/:agencyId/properties', propRoutes);
-
-router.get('/', controller.index);
-router.post('/', controller.store);
-router.post('/edit/:id', controller.update);
-router.post('/delete/:id', controller.destroy);
-
+// As rotas já assumem que o prefixo é /agencies/:agencyId/properties
+router.get('/', ctrl.index);
+router.post('/', ctrl.store);
+router.post('/edit/:id', ctrl.update);
+router.post('/delete/:id', ctrl.destroy);
 
 module.exports = router;
