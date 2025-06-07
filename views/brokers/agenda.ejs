@@ -64,11 +64,13 @@
           const isToday = (cellDate.toISOString().slice(0,10) === todayStr);
           const isThisMonth = (week > 0 || dow >= firstDayOfWeek) && day <= daysInMonth;
           let hasAvail = false;
+          let availsForDay = [];
           if (isThisMonth) {
-            hasAvail = availability.some(a => {
+            availsForDay = availability.filter(a => {
               const d = new Date(a.starts_at);
               return d.getFullYear() === cellDate.getFullYear() && d.getMonth() === cellDate.getMonth() && d.getDate() === cellDate.getDate();
             });
+            hasAvail = availsForDay.length > 0;
           }
         %>
           <td class="calendar-day
@@ -82,7 +84,20 @@
             <% } %>
           >
             <% if (isThisMonth) { %>
-              <%= day %>
+              <div><%= day %></div>
+              <% if (availsForDay.length > 0) { %>
+                <div style="font-size:0.8em; margin-top:0.2em;">
+                  <% availsForDay.forEach(a => { %>
+                    <div>
+                      <% 
+                        const d = new Date(a.starts_at);
+                        const h = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+                      %>
+                      <span style="background:#d4ffd4; border-radius:3px; padding:1px 4px;"><%= h %></span>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } %>
             <% } %>
           </td>
         <% if (isThisMonth) day++; } %>
