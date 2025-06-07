@@ -15,21 +15,26 @@
     .calendar-day:hover { background: #f0f8ff; }
   </style>
   <script>
-    function selectDay(dateStr) {
-      document.getElementById('selectedDay').value = dateStr;
-      document.getElementById('addAvailabilityForm').scrollIntoView({ behavior: 'smooth' });
-    }
-    function changeMonth(delta) {
-      const url = new URL(window.location.href);
-      let month = parseInt(url.searchParams.get('month') || '<%= currentMonth %>');
-      let year = parseInt(url.searchParams.get('year') || '<%= currentYear %>');
-      month += delta;
-      if (month < 1) { month = 12; year--; }
-      if (month > 12) { month = 1; year++; }
-      url.searchParams.set('month', month);
-      url.searchParams.set('year', year);
-      window.location.href = url.toString();
-    }
+  function selectDay(dateStr) {
+    // Atualiza o campo hidden e o campo de data exibido
+    document.getElementById('selectedDay').value = dateStr;
+    document.getElementById('dayDisplay').value = dateStr;
+    // Redireciona para atualizar horários disponíveis e lista do dia
+    const url = new URL(window.location.href);
+    url.searchParams.set('day', dateStr);
+    window.location.href = url.toString();
+  }
+  function changeMonth(delta) {
+    const url = new URL(window.location.href);
+    let month = parseInt(url.searchParams.get('month') || '<%= currentMonth %>');
+    let year = parseInt(url.searchParams.get('year') || '<%= currentYear %>');
+    month += delta;
+    if (month < 1) { month = 12; year--; }
+    if (month > 12) { month = 1; year++; }
+    url.searchParams.set('month', month);
+    url.searchParams.set('year', year);
+    window.location.href = url.toString();
+  }
   </script>
 </head>
 <body>
@@ -135,48 +140,28 @@
     </label>
     <button type="submit" <%= availableSlots.length === 0 ? 'disabled' : '' %>>Adicionar</button>
   </form>
-  <script>
-    // Atualiza o campo de data exibido ao clicar no calendário e recarrega a página para atualizar horários disponíveis
-    document.addEventListener('DOMContentLoaded', function() {
-      const selectedDayInput = document.getElementById('selectedDay');
-      const dayDisplayInput = document.getElementById('dayDisplay');
-      window.selectDay = function(dateStr) {
-        selectedDayInput.value = dateStr;
-        dayDisplayInput.value = dateStr;
-        // Redireciona para atualizar horários disponíveis
-        const url = new URL(window.location.href);
-        url.searchParams.set('day', dateStr);
-        window.location.href = url.toString();
-      }
-    });
-  </script>
 
-  <h2>Períodos Disponíveis</h2>
+  <h2>Disponibilidades do Dia Selecionado</h2>
   <table>
     <thead>
       <tr>
-        <th>Dia</th>
         <th>Início</th>
         <th>Fim</th>
         <th>Ações</th>
       </tr>
     </thead>
     <tbody>
-      <% if (availability.length === 0) { %>
-        <tr><td colspan="4">Nenhum período cadastrado.</td></tr>
+      <% 
+        const selectedAvail = availability.filter(a => {
+          const d = new Date(a.starts_at);
+          return d.toISOString().slice(0, 10) === selectedDay;
+        });
+        if (selectedAvail.length === 0) { 
+      %>
+        <tr><td colspan="3">Nenhuma disponibilidade cadastrada para este dia.</td></tr>
       <% } %>
-      <% availability.forEach(a => { %>
+      <% selectedAvail.forEach(a => { %>
         <tr>
-          <td>
-            <% 
-              let dia = '';
-              if (a.starts_at) {
-                const d = new Date(a.starts_at);
-                dia = d.toISOString().slice(0,10);
-              }
-            %>
-            <%= dia %>
-          </td>
           <td>
             <% 
               let inicio = '';
@@ -199,7 +184,7 @@
           </td>
           <td>
             <form action="/brokers/<%= broker.id %>/agenda/delete/<%= a.id %>" method="POST" style="display:inline;">
-              <button type="submit" onclick="return confirm('Deseja remover este horário?')">Remover</button>
+              <button type="submit" onclick="return confirm('Deseja remover esta disponibilidade?')">Remover</button>
             </form>
           </td>
         </tr>
