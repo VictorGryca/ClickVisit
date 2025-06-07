@@ -50,28 +50,35 @@
         <tr>
           <td>
             <% 
-              // Mostra apenas a data (YYYY-MM-DD)
-              const dia = a.starts_at instanceof Date 
-                ? a.starts_at.toISOString().slice(0,10) 
-                : (typeof a.starts_at === 'string' ? a.starts_at.slice(0,10) : '');
+              // Mostra apenas a data (YYYY-MM-DD) em UTC
+              let dia = '';
+              if (a.starts_at) {
+                const d = new Date(a.starts_at);
+                dia = d.toISOString().slice(0,10);
+              }
             %>
             <%= dia %>
           </td>
           <td>
             <% 
-              // Mostra apenas hora:minuto do início
-              const inicio = a.starts_at instanceof Date 
-                ? a.starts_at.toISOString().slice(11,16) 
-                : (typeof a.starts_at === 'string' ? a.starts_at.slice(11,16) : '');
+              // Mostra hora:minuto local do início
+              let inicio = '';
+              if (a.starts_at) {
+                const d = new Date(a.starts_at);
+                // Ajusta para horário local
+                inicio = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+              }
             %>
             <%= inicio %>
           </td>
           <td>
             <% 
-              // Mostra apenas hora:minuto do fim
-              const fim = a.ends_at instanceof Date 
-                ? a.ends_at.toISOString().slice(11,16) 
-                : (typeof a.ends_at === 'string' ? a.ends_at.slice(11,16) : '');
+              // Mostra hora:minuto local do fim
+              let fim = '';
+              if (a.ends_at) {
+                const d = new Date(a.ends_at);
+                fim = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+              }
             %>
             <%= fim %>
           </td>
