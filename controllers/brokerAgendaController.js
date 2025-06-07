@@ -9,7 +9,29 @@ exports.index = async (req, res) => {
 
     const availability = await Broker.getAvailability(brokerId);
 
-    res.render('brokers/agenda', { broker, availability });
+    // Calendar logic
+    const now = new Date();
+    const currentMonth = parseInt(req.query.month) || (now.getMonth() + 1);
+    const currentYear = parseInt(req.query.year) || now.getFullYear();
+    const firstDayOfWeek = new Date(currentYear, currentMonth - 1, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+    const todayStr = now.toISOString().slice(0, 10);
+    const monthNames = [
+      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+    const currentMonthName = monthNames[currentMonth - 1];
+
+    res.render('brokers/agenda', {
+      broker,
+      availability,
+      currentMonth,
+      currentYear,
+      firstDayOfWeek,
+      daysInMonth,
+      todayStr,
+      currentMonthName
+    });
   } catch (err) {
     res.status(500).send('Erro ao buscar agenda do corretor.');
   }

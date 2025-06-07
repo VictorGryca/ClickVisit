@@ -5,8 +5,32 @@
   <title>Agenda de Disponibilidade - <%= broker.name %></title>
   <style>
     table { border-collapse: collapse; }
-    th, td { padding: .4rem .8rem; border: 1px solid #666; }
+    th, td { padding: .4rem .8rem; border: 1px solid #666; text-align: center; }
+    .calendar { margin: 1.5rem 0; }
+    .calendar th { background: #eee; }
+    .calendar-day { cursor: pointer; }
+    .calendar-day.has-availability { background: #d4ffd4; }
+    .calendar-day.today { border: 2px solid #007bff; }
+    .calendar-day.selected { background: #b3d7ff; }
+    .calendar-day:hover { background: #f0f8ff; }
   </style>
+  <script>
+    function selectDay(dateStr) {
+      document.getElementById('selectedDay').value = dateStr;
+      document.getElementById('addAvailabilityForm').scrollIntoView({ behavior: 'smooth' });
+    }
+    function changeMonth(delta) {
+      const url = new URL(window.location.href);
+      let month = parseInt(url.searchParams.get('month') || '<%= currentMonth %>');
+      let year = parseInt(url.searchParams.get('year') || '<%= currentYear %>');
+      month += delta;
+      if (month < 1) { month = 12; year--; }
+      if (month > 12) { month = 1; year++; }
+      url.searchParams.set('month', month);
+      url.searchParams.set('year', year);
+      window.location.href = url.toString();
+    }
+  </script>
 </head>
 <body>
   <div style="text-align:right;">
@@ -14,11 +38,67 @@
   </div>
   <h1>Agenda de Disponibilidade - <%= broker.name %></h1>
 
+  <h2>Calendário</h2>
+  <div>
+    <button onclick="changeMonth(-1)">&lt; Mês anterior</button>
+    <strong>
+      <%= currentMonthName %> / <%= currentYear %>
+    </strong>
+    <button onclick="changeMonth(1)">Próximo mês &gt;</button>
+  </div>
+  <table class="calendar">
+    <thead>
+      <tr>
+        <th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% 
+        let day = 1;
+        let started = false;
+        for (let week = 0; week < 6; week++) { 
+      %>
+        <tr>
+        <% for (let dow = 0; dow < 7; dow++) { 
+          const cellDate = new Date(currentYear, currentMonth - 1, day);
+          const isToday = (cellDate.toISOString().slice(0,10) === todayStr);
+          const isThisMonth = (week > 0 || dow >= firstDayOfWeek) && day <= daysInMonth;
+          let hasAvail = false;
+          if (isThisMonth) {
+            hasAvail = availability.some(a => {
+              const d = new Date(a.starts_at);
+              return d.getFullYear() === cellDate.getFullYear() && d.getMonth() === cellDate.getMonth() && d.getDate() === cellDate.getDate();
+            });
+          }
+        %>
+          <td class="calendar-day
+            <% if (isThisMonth) { %>
+              <% if (isToday) { %> today<% } %>
+              <% if (hasAvail) { %> has-availability<% } %>
+            <% } %>"
+            <% if (isThisMonth) { %>
+              onclick="selectDay('<%= cellDate.toISOString().slice(0,10) %>')"
+              title="Clique para adicionar disponibilidade"
+            <% } %>
+          >
+            <% if (isThisMonth) { %>
+              <%= day %>
+            <% } %>
+          </td>
+        <% if (isThisMonth) day++; } %>
+        </tr>
+        <% if (day > daysInMonth) break; %>
+      <% } %>
+    </tbody>
+  </table>
+
   <h2>Adicionar Disponibilidade</h2>
-  <form action="/brokers/<%= broker.id %>/agenda/add" method="POST">
+  <form id="addAvailabilityForm" action="/brokers/<%= broker.id %>/agenda/add" method="POST">
+    <input type="hidden" id="selectedDay" name="day" value="<%= todayStr %>">
     <label>
       Dia:
-      <input type="date" name="day" required>
+      <input type="date" name="day_display" id="dayDisplay" value="<%= todayStr %>" required readonly
+        onclick="this.type='date';this.readOnly=false;">
     </label>
     <label>
       Horário:
@@ -32,6 +112,20 @@
     </label>
     <button type="submit">Adicionar</button>
   </form>
+  <script>
+    // Atualiza o campo de data exibido ao clicar no calendário
+    document.addEventListener('DOMContentLoaded', function() {
+      const selectedDayInput = document.getElementById('selectedDay');
+      const dayDisplayInput = document.getElementById('dayDisplay');
+      window.selectDay = function(dateStr) {
+        selectedDayInput.value = dateStr;
+        dayDisplayInput.value = dateStr;
+        dayDisplayInput.type = 'date';
+        dayDisplayInput.readOnly = false;
+        dayDisplayInput.focus();
+      }
+    });
+  </script>
 
   <h2>Períodos Disponíveis</h2>
   <table>
@@ -50,7 +144,6 @@
         <tr>
           <td>
             <% 
-              // Mostra apenas a data (YYYY-MM-DD) em UTC
               let dia = '';
               if (a.starts_at) {
                 const d = new Date(a.starts_at);
@@ -61,11 +154,9 @@
           </td>
           <td>
             <% 
-              // Mostra hora:minuto local do início
               let inicio = '';
               if (a.starts_at) {
                 const d = new Date(a.starts_at);
-                // Ajusta para horário local
                 inicio = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
               }
             %>
@@ -73,7 +164,6 @@
           </td>
           <td>
             <% 
-              // Mostra hora:minuto local do fim
               let fim = '';
               if (a.ends_at) {
                 const d = new Date(a.ends_at);
