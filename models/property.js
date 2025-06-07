@@ -11,6 +11,11 @@ module.exports = {
     return r.rows;
   },
 
+  async findById(id) {
+    const result = await db.query('SELECT * FROM properties WHERE id = $1', [id]);
+    return result.rows[0];
+  },
+
   async update(id, data) {
     const q = 'UPDATE properties SET address=$1, price=$2, status=$3 WHERE id=$4';
     return db.query(q, [data.address, data.price, data.status, id]);

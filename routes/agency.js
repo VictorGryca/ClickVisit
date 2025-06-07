@@ -8,7 +8,11 @@ router.post('/', ctrl.store);
 router.post('/edit/:id', ctrl.update);
 router.post('/delete/:id', ctrl.destroy);
 
-// Novas rotas para brokers em propriedades
+// Novas rotas para agenda da propriedade
+router.get('/:propertyId', ctrl.propertyCalendar);
+router.post('/:propertyId/add-event', ctrl.addEvent);
+router.post('/:propertyId/delete-event/:eventId', ctrl.deleteEvent);
+
 router.post('/:propertyId/add-broker', ctrl.addBroker);
 router.post('/:propertyId/remove-broker/:brokerId', ctrl.removeBroker);
 

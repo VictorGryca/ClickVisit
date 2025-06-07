@@ -74,6 +74,9 @@
             </form>
           </td>
           <td>
+            <a href="/agencies/<%= agencyId %>/properties/<%= prop.id %>">
+              <button type="button">Ver Agenda</button>
+            </a>
             <!-- EXCLUIR -->
             <form class="inline" action="/agencies/<%= agencyId %>/properties/delete/<%= prop.id %>" method="POST">
               <button type="submit">Deletar</button>
