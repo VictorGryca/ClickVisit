@@ -11,11 +11,6 @@ module.exports = {
     return r.rows;
   },
 
-  async update(id, data) {
-    const q = 'UPDATE properties SET address=$1, price=$2, status=$3 WHERE id=$4';
-    return db.query(q, [data.address, data.price, data.status, id]);
-  },
-
   async delete(id) {
     return db.query('DELETE FROM properties WHERE id=$1', [id]);
   },
@@ -49,5 +44,16 @@ module.exports = {
     `;
     const result = await db.query(query, [id]);
     return result.rows;
-  }
+  },
+
+  async getAvailability(brokerId) {
+    const query = 'SELECT id, starts_at, ends_at, description FROM availability WHERE broker_id = $1 ORDER BY starts_at';
+    const result = await db.query(query, [brokerId]);
+    return result.rows;
+  },
+
+  async addAvailability(brokerId, starts_at, ends_at) {
+    const query = 'INSERT INTO availability (broker_id, starts_at, ends_at) VALUES ($1, $2, $3)';
+    return db.query(query, [brokerId, starts_at, ends_at]);
+  },
 };
