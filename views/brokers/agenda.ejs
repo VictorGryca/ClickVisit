@@ -152,11 +152,12 @@
         <th>Dia</th>
         <th>Início</th>
         <th>Fim</th>
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody>
       <% if (availability.length === 0) { %>
-        <tr><td colspan="3">Nenhum período cadastrado.</td></tr>
+        <tr><td colspan="4">Nenhum período cadastrado.</td></tr>
       <% } %>
       <% availability.forEach(a => { %>
         <tr>
@@ -189,6 +190,11 @@
               }
             %>
             <%= fim %>
+          </td>
+          <td>
+            <form action="/brokers/<%= broker.id %>/agenda/delete/<%= a.id %>" method="POST" style="display:inline;">
+              <button type="submit" onclick="return confirm('Deseja remover este horário?')">Remover</button>
+            </form>
           </td>
         </tr>
       <% }) %>

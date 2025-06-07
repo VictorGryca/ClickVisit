@@ -56,4 +56,9 @@ module.exports = {
     const query = 'INSERT INTO availability (broker_id, starts_at, ends_at) VALUES ($1, $2, $3)';
     return db.query(query, [brokerId, starts_at, ends_at]);
   },
+
+  async deleteAvailability(brokerId, availabilityId) {
+    const query = 'DELETE FROM availability WHERE id = $1 AND broker_id = $2';
+    return db.query(query, [availabilityId, brokerId]);
+  },
 };

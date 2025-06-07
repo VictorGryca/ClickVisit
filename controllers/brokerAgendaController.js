@@ -86,3 +86,15 @@ exports.add = async (req, res) => {
     res.status(500).send('Erro ao cadastrar disponibilidade.');
   }
 };
+
+// Deleta horário disponível
+exports.delete = async (req, res) => {
+  const brokerId = req.params.id;
+  const availabilityId = req.params.availId;
+  try {
+    await require('../models/broker').deleteAvailability(brokerId, availabilityId);
+    res.redirect(`/brokers/${brokerId}/agenda`);
+  } catch (err) {
+    res.status(500).send('Erro ao deletar disponibilidade.');
+  }
+};
