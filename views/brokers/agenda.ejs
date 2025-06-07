@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Agenda de Disponibilidade - <%= broker.name %></title>
+  <style>
+    table { border-collapse: collapse; }
+    th, td { padding: .4rem .8rem; border: 1px solid #666; }
+  </style>
+</head>
+<body>
+  <div style="text-align:right;">
+    <a href="/logout"><button>Logout</button></a>
+  </div>
+  <h1>Agenda de Disponibilidade - <%= broker.name %></h1>
+
+  <h2>Adicionar Disponibilidade</h2>
+  <form action="/brokers/<%= broker.id %>/agenda/add" method="POST">
+    <label>
+      Dia:
+      <input type="date" name="day" required>
+    </label>
+    <label>
+      Horário:
+      <select name="time_slot" required>
+        <option value="09:00">09:00</option>
+        <option value="10:30">10:30</option>
+        <option value="13:00">13:00</option>
+        <option value="14:30">14:30</option>
+        <option value="16:00">16:00</option>
+      </select>
+    </label>
+    <button type="submit">Adicionar</button>
+  </form>
+
+  <h2>Períodos Disponíveis</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Dia</th>
+        <th>Início</th>
+        <th>Fim</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (availability.length === 0) { %>
+        <tr><td colspan="3">Nenhum período cadastrado.</td></tr>
+      <% } %>
+      <% availability.forEach(a => { %>
+        <tr>
+          <td>
+            <% 
+              // Mostra apenas a data (YYYY-MM-DD)
+              const dia = a.starts_at instanceof Date 
+                ? a.starts_at.toISOString().slice(0,10) 
+                : (typeof a.starts_at === 'string' ? a.starts_at.slice(0,10) : '');
+            %>
+            <%= dia %>
+          </td>
+          <td>
+            <% 
+              // Mostra apenas hora:minuto do início
+              const inicio = a.starts_at instanceof Date 
+                ? a.starts_at.toISOString().slice(11,16) 
+                : (typeof a.starts_at === 'string' ? a.starts_at.slice(11,16) : '');
+            %>
+            <%= inicio %>
+          </td>
+          <td>
+            <% 
+              // Mostra apenas hora:minuto do fim
+              const fim = a.ends_at instanceof Date 
+                ? a.ends_at.toISOString().slice(11,16) 
+                : (typeof a.ends_at === 'string' ? a.ends_at.slice(11,16) : '');
+            %>
+            <%= fim %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <a href="/brokers/<%= broker.id %>"><button>Voltar ao Perfil</button></a>
+</body>
+</html>

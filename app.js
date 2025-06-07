@@ -7,6 +7,7 @@ require('dotenv').config();
 const adminRoutes = require('./routes/admin');
 const agencyRoutes = require('./routes/agency');
 const loginRoutes = require('./routes/login');
+const brokerAgendaRoutes = require('./routes/brokerAgenda');
 const db = require('./config/db');
 
 const app = express();
@@ -41,6 +42,7 @@ app.post('/brokers/:id/edit', async (req, res) => {
 });
 app.use('/agencies/:agencyId/properties', agencyRoutes);
 app.use('/login', loginRoutes);
+app.use('/brokers/:id/agenda', brokerAgendaRoutes);
 
 // Redireciona raiz para tela de login
 app.get('/', (req, res) => res.redirect('/login'));
