@@ -109,35 +109,38 @@
 
   <h2>Adicionar Disponibilidade</h2>
   <form id="addAvailabilityForm" action="/brokers/<%= broker.id %>/agenda/add" method="POST">
-    <input type="hidden" id="selectedDay" name="day" value="<%= todayStr %>">
+    <input type="hidden" id="selectedDay" name="day" value="<%= selectedDay %>">
     <label>
       Dia:
-      <input type="date" name="day_display" id="dayDisplay" value="<%= todayStr %>" required readonly
+      <input type="date" name="day_display" id="dayDisplay" value="<%= selectedDay %>" required readonly
         onclick="this.type='date';this.readOnly=false;">
     </label>
     <label>
       Horário:
       <select name="time_slot" required>
-        <option value="09:00">09:00</option>
-        <option value="10:30">10:30</option>
-        <option value="13:00">13:00</option>
-        <option value="14:30">14:30</option>
-        <option value="16:00">16:00</option>
+        <% if (availableSlots.length === 0) { %>
+          <option value="">Nenhum horário disponível</option>
+        <% } else { %>
+          <% availableSlots.forEach(slot => { %>
+            <option value="<%= slot %>"><%= slot %></option>
+          <% }) %>
+        <% } %>
       </select>
     </label>
-    <button type="submit">Adicionar</button>
+    <button type="submit" <%= availableSlots.length === 0 ? 'disabled' : '' %>>Adicionar</button>
   </form>
   <script>
-    // Atualiza o campo de data exibido ao clicar no calendário
+    // Atualiza o campo de data exibido ao clicar no calendário e recarrega a página para atualizar horários disponíveis
     document.addEventListener('DOMContentLoaded', function() {
       const selectedDayInput = document.getElementById('selectedDay');
       const dayDisplayInput = document.getElementById('dayDisplay');
       window.selectDay = function(dateStr) {
         selectedDayInput.value = dateStr;
         dayDisplayInput.value = dateStr;
-        dayDisplayInput.type = 'date';
-        dayDisplayInput.readOnly = false;
-        dayDisplayInput.focus();
+        // Redireciona para atualizar horários disponíveis
+        const url = new URL(window.location.href);
+        url.searchParams.set('day', dateStr);
+        window.location.href = url.toString();
       }
     });
   </script>

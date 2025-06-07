@@ -22,6 +22,24 @@ exports.index = async (req, res) => {
     ];
     const currentMonthName = monthNames[currentMonth - 1];
 
+    // Determina o dia selecionado (por padrão hoje)
+    const selectedDay = req.query.day || todayStr;
+
+    // Horários possíveis
+    const allowedSlots = ["09:00", "10:30", "13:00", "14:30", "16:00"];
+    // Horários já cadastrados para o dia selecionado
+    const takenSlots = availability
+      .filter(a => {
+        const d = new Date(a.starts_at);
+        return d.toISOString().slice(0, 10) === selectedDay;
+      })
+      .map(a => {
+        const d = new Date(a.starts_at);
+        return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+      });
+    // Horários disponíveis para o dia selecionado
+    const availableSlots = allowedSlots.filter(slot => !takenSlots.includes(slot));
+
     res.render('brokers/agenda', {
       broker,
       availability,
@@ -30,7 +48,9 @@ exports.index = async (req, res) => {
       firstDayOfWeek,
       daysInMonth,
       todayStr,
-      currentMonthName
+      currentMonthName,
+      selectedDay,
+      availableSlots
     });
   } catch (err) {
     res.status(500).send('Erro ao buscar agenda do corretor.');
