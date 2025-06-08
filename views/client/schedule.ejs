@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Agendar Visita</title>
+</head>
+<body>
+  <h1>Agendar Visita com <%= broker.name %> no imóvel <%= property.address %></h1>
+  <h2><%= currentMonthName %> <%= currentYear %></h2>
+  <form method="get">
+    <input type="hidden" name="month" value="<%= currentMonth %>">
+    <input type="hidden" name="year" value="<%= currentYear %>">
+    <label for="day">Selecione o dia:</label>
+    <input type="date" id="day" name="day" value="<%= selectedDay %>">
+    <button type="submit">Ver horários</button>
+  </form>
+  <h3>Horários disponíveis em <%= selectedDay %>:</h3>
+  <ul>
+    <% if (availableSlots.length === 0) { %>
+      <li>Nenhum horário disponível.</li>
+    <% } else { %>
+      <% availableSlots.forEach(slot => { %>
+        <li><%= slot %></li>
+      <% }) %>
+    <% } %>
+  </ul>
+</body>
+</html>

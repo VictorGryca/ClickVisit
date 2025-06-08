@@ -9,6 +9,7 @@ const agencyRoutes = require('./routes/agency');
 const loginRoutes = require('./routes/login');
 const brokerAgendaRoutes = require('./routes/brokerAgenda');
 const brokerRoutes = require('./routes/broker');
+const clientRoutes = require('./routes/client'); // Adicione esta linha
 const db = require('./config/db');
 
 const app = express();
@@ -30,6 +31,7 @@ app.use('/brokers', brokerRoutes);
 app.use('/brokers/:id/agenda', brokerAgendaRoutes);
 app.use('/agencies/:agencyId/properties', agencyRoutes);
 app.use('/login', loginRoutes);
+app.use('/client', clientRoutes); // Adicione esta linha
 
 // Redireciona raiz para tela de login
 app.get('/', (req, res) => res.redirect('/login'));
