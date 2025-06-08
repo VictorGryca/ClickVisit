@@ -1,0 +1,9 @@
+table { border-collapse: collapse; }
+th, td { padding: .4rem .8rem; border: 1px solid #666; text-align: center; }
+.calendar { margin: 1.5rem 0; }
+.calendar th { background: #eee; }
+.calendar-day { cursor: pointer; }
+.calendar-day.has-event { background: #ffe4b3; }
+.calendar-day.today { border: 2px solid #007bff; }
+.calendar-day.selected { background: #b3d7ff; }
+.calendar-day:hover { background: #f0f8ff; }

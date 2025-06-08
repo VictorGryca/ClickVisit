@@ -1,0 +1,5 @@
+body { font-family: Arial, sans-serif; }
+.property-info { margin: 2rem auto; max-width: 600px; }
+.property-info h2 { margin-bottom: 1rem; }
+.property-info table { width: 100%; border-collapse: collapse; }
+.property-info th, .property-info td { border: 1px solid #ccc; padding: 0.5rem; }
