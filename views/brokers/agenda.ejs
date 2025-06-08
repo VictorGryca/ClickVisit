@@ -138,6 +138,17 @@
         <% } %>
       </select>
     </label>
+    <script>
+      // Ao submeter, monta o campo "day" com timezone -03:00
+      document.getElementById('addAvailabilityForm').onsubmit = function(e) {
+        var day = document.getElementById('dayDisplay').value;
+        var time = this.time_slot.value;
+        if (day && time) {
+          // Monta o campo hidden "day" no formato YYYY-MM-DDTHH:MM:00-03:00
+          document.getElementById('selectedDay').value = day + 'T' + time + ':00-03:00';
+        }
+      };
+    </script>
     <button type="submit" <%= availableSlots.length === 0 ? 'disabled' : '' %>>Adicionar</button>
   </form>
 

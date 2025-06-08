@@ -60,7 +60,7 @@ exports.index = async (req, res) => {
 // Adiciona novo horário disponível
 exports.add = async (req, res) => {
   const brokerId = req.params.id;
-  const { day, time_slot } = req.body;
+  let { day, time_slot } = req.body;
   const allowedSlots = ["09:00", "10:30", "13:00", "14:30", "16:00"];
   if (!allowedSlots.includes(time_slot)) {
     return res.status(400).send('Horário inválido.');
@@ -76,11 +76,21 @@ exports.add = async (req, res) => {
   if (!slot) {
     return res.status(400).send('Horário inválido.');
   }
-  const starts_at = `${day}T${slot.start}:00`;
-  const ends_at = `${day}T${slot.end}:00`;
+
+  // Se day já vier com timezone, use direto, senão monte com -03:00
+  let starts_at, ends_at;
+  if (day.includes('T')) {
+    // day já está no formato completo com timezone
+    starts_at = day;
+    // Troca o horário para o fim do slot mantendo o mesmo dia/timezone
+    ends_at = day.replace(slot.start, slot.end);
+  } else {
+    starts_at = `${day}T${slot.start}:00-03:00`;
+    ends_at = `${day}T${slot.end}:00-03:00`;
+  }
 
   try {
-    await Broker.addAvailability(brokerId, starts_at, ends_at);
+    await require('../models/broker').addAvailability(brokerId, starts_at, ends_at);
     res.redirect(`/brokers/${brokerId}/agenda`);
   } catch (err) {
     res.status(500).send('Erro ao cadastrar disponibilidade.');

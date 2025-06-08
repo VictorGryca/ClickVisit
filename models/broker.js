@@ -49,6 +49,7 @@ module.exports = {
   async getAvailability(brokerId) {
     const query = 'SELECT id, starts_at, ends_at, description FROM availability WHERE broker_id = $1 ORDER BY starts_at';
     const result = await db.query(query, [brokerId]);
+    // Retorna as datas em UTC (sem ajuste)
     return result.rows;
   },
 
