@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Agendar Visita</title>
+</head>
+<body>
+  <h1>Agendar Visita</h1>
+  <p>
+    Imóvel: <strong><%= property.address %></strong><br>
+    Data: <strong><%= day %></strong><br>
+    Horário: <strong><%= slot %></strong>
+  </p>
+  <form method="post">
+    <input type="hidden" name="day" value="<%= day %>">
+    <input type="hidden" name="slot" value="<%= slot %>">
+    <label>Nome:<br>
+      <input type="text" name="name" required>
+    </label><br><br>
+    <label>Celular:<br>
+      <input type="text" name="phone" required>
+    </label><br><br>
+    <label>Email:<br>
+      <input type="email" name="email" required>
+    </label><br><br>
+    <button type="submit">Agendar</button>
+  </form>
+</body>
+</html>

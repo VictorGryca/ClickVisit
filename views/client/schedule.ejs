@@ -128,14 +128,25 @@
     </tbody>
   </table>
   <h2>Horários disponíveis no dia <%= selectedDay %></h2>
-  <ul>
+  <form id="visitForm" method="get" action="/client/schedule/<%= broker.id %>/<%= property.id %>/book">
+    <ul>
+      <% if (availabilityByDay[selectedDay] && availabilityByDay[selectedDay].length > 0) { %>
+        <% availabilityByDay[selectedDay].forEach(slot => { %>
+          <li>
+            <label>
+              <input type="radio" name="slot" value="<%= slot %>" required>
+              <%= slot %>
+            </label>
+          </li>
+        <% }) %>
+      <% } else { %>
+        <li>Nenhum horário disponível.</li>
+      <% } %>
+    </ul>
     <% if (availabilityByDay[selectedDay] && availabilityByDay[selectedDay].length > 0) { %>
-      <% availabilityByDay[selectedDay].forEach(slot => { %>
-        <li><%= slot %></li>
-      <% }) %>
-    <% } else { %>
-      <li>Nenhum horário disponível.</li>
+      <input type="hidden" name="day" value="<%= selectedDay %>">
+      <button type="submit">Marcar visita</button>
     <% } %>
-  </ul>
+  </form>
 </body>
 </html>

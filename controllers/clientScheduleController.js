@@ -98,3 +98,72 @@ exports.index = async (req, res) => {
     res.status(500).send('Erro ao buscar horários disponíveis: ' + err.message); // Mostra mensagem detalhada
   }
 };
+
+// Exibe formulário para o cliente preencher dados e confirmar agendamento
+exports.bookForm = async (req, res) => {
+  const { brokerId, propertyId } = req.params;
+  const { day, slot } = req.query;
+  const broker = await Broker.findBasicById(brokerId);
+  const property = await Property.findById(propertyId);
+  if (!broker || !property || !day || !slot) {
+    return res.status(400).send('Dados insuficientes para agendamento.');
+  }
+  res.render('client/book', {
+    broker,
+    property,
+    day,
+    slot
+  });
+};
+
+// Processa o agendamento: cadastra cliente e visita
+exports.bookVisit = async (req, res) => {
+  const { brokerId, propertyId } = req.params;
+  const { day, slot, name, phone, email } = req.body;
+  try {
+    const db = require('../config/db');
+    // Busca cliente pelo email
+    let clientResult = await db.query(
+      'SELECT id FROM clients WHERE email = $1',
+      [email]
+    );
+    let clientId;
+    if (clientResult.rows.length > 0) {
+      clientId = clientResult.rows[0].id;
+    } else {
+      const insertClient = await db.query(
+        'INSERT INTO clients (name, phone, email) VALUES ($1, $2, $3) RETURNING id',
+        [name, phone, email]
+      );
+      clientId = insertClient.rows[0].id;
+    }
+
+    // Monta starts_at e ends_at a partir do slot
+    const slotMap = {
+      "09:00": { start: "09:00", end: "10:30" },
+      "10:30": { start: "10:30", end: "12:00" },
+      "13:00": { start: "13:00", end: "14:30" },
+      "14:30": { start: "14:30", end: "16:00" },
+      "16:00": { start: "16:00", end: "17:30" }
+    };
+    const slotObj = slotMap[slot];
+    if (!slotObj) return res.status(400).send('Horário inválido.');
+
+    const starts_at = `${day}T${slotObj.start}:00-03:00`;
+    const ends_at = `${day}T${slotObj.end}:00-03:00`;
+
+    await db.query(
+      'INSERT INTO visits (client_id, broker_id, property_id, starts_at, ends_at) VALUES ($1, $2, $3, $4, $5)',
+      [clientId, brokerId, propertyId, starts_at, ends_at]
+    );
+
+    // Corrija aqui: busque o property para passar para a view de sucesso
+    const Property = require('../models/property');
+    const property = await Property.findById(propertyId);
+
+    res.render('client/success', { name, day, slot, property });
+  } catch (err) {
+    console.error('Erro ao agendar visita:', err);
+    res.status(500).send('Erro ao agendar visita.');
+  }
+};
