@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Agenda da Propriedade <%= property.address %></title>
+  <link rel="stylesheet" href="/css/property-calendar.css">
+  <script>
+    function selectDay(dateStr) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('day', dateStr);
+      window.location.href = url.toString();
+    }
+    function changeMonth(delta) {
+      const url = new URL(window.location.href);
+      let month = parseInt(url.searchParams.get('month') || '<%= currentMonth %>');
+      let year = parseInt(url.searchParams.get('year') || '<%= currentYear %>');
+      month += delta;
+      if (month < 1) { month = 12; year--; }
+      if (month > 12) { month = 1; year++; }
+      url.searchParams.set('month', month);
+      url.searchParams.set('year', year);
+      window.location.href = url.toString();
+    }
+  </script>
+</head>
+<body>
+  <h1>Agenda da Propriedade: <%= property.address %></h1>
+  <a href="/agencies/<%= agencyId %>/properties"><button>Voltar</button></a>
+  <h2>Calendário</h2>
+  <div>
+    <button onclick="changeMonth(-1)">&lt; Mês anterior</button>
+    <strong>
+      <%= currentMonthName %> / <%= currentYear %>
+    </strong>
+    <button onclick="changeMonth(1)">Próximo mês &gt;</button>
+  </div>
+  <%
+    // Função para criar Date em UTC-3 (São Paulo)
+    function dateInSaoPaulo(dateStr) {
+      if (!dateStr) return null;
+      // Sempre trata como UTC e converte para UTC-3
+      const d = new Date(dateStr);
+      // Corrija: para UTC-3, some 3 horas ao UTC (não subtraia!)
+      d.setHours(d.getHours() + 3);
+      return d;
+    }
+    function getDateStrSP(dateStr) {
+      const d = dateInSaoPaulo(dateStr);
+      if (!d) return '';
+      return d.getFullYear() + '-' +
+             (d.getMonth() + 1).toString().padStart(2, '0') + '-' +
+             d.getDate().toString().padStart(2, '0');
+    }
+    function formatHourSP(dateStr) {
+      const d = dateInSaoPaulo(dateStr);
+      if (!d) return '';
+      return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+    }
+    // Dia de hoje em São Paulo (UTC-3)
+    const now = new Date();
+    now.setHours(now.getHours() + 3);
+    const todayStrSP = now.getFullYear() + '-' +
+                       (now.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                       now.getDate().toString().padStart(2, '0');
+  %>
+  <table class="calendar">
+    <thead>
+      <tr>
+        <th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% 
+        let day = 1;
+        for (let week = 0; week < 6; week++) { 
+      %>
+        <tr>
+        <% for (let dow = 0; dow < 7; dow++) { 
+          const cellDate = new Date(currentYear, currentMonth - 1, day);
+          const cellDateStr = cellDate.getFullYear() + '-' +
+                              (cellDate.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                              cellDate.getDate().toString().padStart(2, '0');
+          const isToday = (cellDateStr === todayStrSP);
+          const isSelected = (cellDateStr === selectedDay);
+          const isThisMonth = (week > 0 || dow >= firstDayOfWeek) && day <= daysInMonth;
+          let hasEvent = false;
+          let eventsForDay = [];
+          if (isThisMonth) {
+            eventsForDay = events.filter(ev => {
+              return getDateStrSP(ev.starts_at) === cellDateStr;
+            });
+            hasEvent = eventsForDay.length > 0;
+          }
+        %>
+          <td class="calendar-day
+            <% if (isThisMonth) { %>
+              <% if (isToday) { %> today<% } %>
+              <% if (isSelected) { %> selected<% } %>
+              <% if (hasEvent) { %> has-event<% } %>
+            <% } %>"
+            <% if (isThisMonth) { %>
+              onclick="selectDay('<%= cellDateStr %>')"
+              title="Clique para adicionar evento"
+            <% } %>
+          >
+            <% if (isThisMonth) { %>
+              <div><%= day %></div>
+              <% if (eventsForDay.length > 0) { %>
+                <div style="font-size:0.8em; margin-top:0.2em;">
+                  <% eventsForDay.forEach(ev => { %>
+                    <div>
+                      <span style="background:#ffe4b3; border-radius:3px; padding:1px 4px;">
+                        <%= ev.event_type %> (<%= formatHourSP(ev.starts_at) %>)
+                      </span>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } %>
+              <% if (isSelected) { %>
+                <div style="margin-top:0.2em; color:#007bff; font-size:0.85em; font-weight:bold;">Selecionado</div>
+              <% } %>
+            <% } %>
+          </td>
+        <% if (isThisMonth) day++; } %>
+        </tr>
+        <% if (day > daysInMonth) break; %>
+      <% } %>
+    </tbody>
+  </table>
+
+  <h2>Adicionar Evento</h2>
+  <form action="/agencies/<%= agencyId %>/properties/<%= property.id %>/add-event" method="POST">
+    <input type="hidden" name="day" value="<%= selectedDay %>">
+    <label>
+      Tipo de evento:
+      <select name="event_type" required>
+        <option value="manutenção">Manutenção</option>
+        <option value="interditado">Interditado</option>
+      </select>
+    </label>
+    <label>
+      Início:
+      <input type="time" name="starts_at" required>
+    </label>
+    <label>
+      Fim:
+      <input type="time" name="ends_at" required>
+    </label>
+    <label>
+      Descrição:
+      <input type="text" name="description" maxlength="100">
+    </label>
+    <button type="submit">Adicionar Evento</button>
+  </form>
+
+  <h2>Eventos do Dia Selecionado</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Início</th>
+        <th>Fim</th>
+        <th>Descrição</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% 
+        const selectedEvents = events.filter(ev => {
+          return getDateStrSP(ev.starts_at) === selectedDay;
+        });
+        if (selectedEvents.length === 0) { 
+      %>
+        <tr><td colspan="5">Nenhum evento cadastrado para este dia.</td></tr>
+      <% } %>
+      <% selectedEvents.forEach(ev => { %>
+        <tr>
+          <td><%= ev.event_type %></td>
+          <td>
+            <%= formatHourSP(ev.starts_at) %>
+          </td>
+          <td>
+            <%= formatHourSP(ev.ends_at) %>
+          </td>
+          <td><%= ev.description || '' %></td>
+          <td>
+            <form action="/agencies/<%= agencyId %>/properties/<%= property.id %>/delete-event/<%= ev.id %>" method="POST" style="display:inline;">
+              <button type="submit" onclick="return confirm('Deseja remover este evento?')">Remover</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>

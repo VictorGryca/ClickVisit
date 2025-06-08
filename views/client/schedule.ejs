@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Agenda do Corretor <%= broker.name %> / <%= property.address %></title>
+  <link rel="stylesheet" href="/css/client-schedule.css">
+  <script>
+    function selectDay(dateStr) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('day', dateStr);
+      window.location.href = url.toString();
+    }
+    function changeMonth(delta) {
+      const url = new URL(window.location.href);
+      let month = parseInt(url.searchParams.get('month') || '<%= currentMonth %>');
+      let year = parseInt(url.searchParams.get('year') || '<%= currentYear %>');
+      month += delta;
+      if (month < 1) { month = 12; year--; }
+      if (month > 12) { month = 1; year++; }
+      url.searchParams.set('month', month);
+      url.searchParams.set('year', year);
+      window.location.href = url.toString();
+    }
+  </script>
+</head>
+<body>
+  <h1>Agenda do Corretor: <%= broker.name %> / Imóvel: <%= property.address %></h1>
+  <a href="/brokers/<%= broker.id %>/properties"><button>Voltar</button></a>
+  <h2>Calendário</h2>
+  <div>
+    <button onclick="changeMonth(-1)">&lt; Mês anterior</button>
+    <strong>
+      <%= currentMonthName %> / <%= currentYear %>
+    </strong>
+    <button onclick="changeMonth(1)">Próximo mês &gt;</button>
+  </div>
+  <%
+    // Função para criar Date em UTC-3 (São Paulo)
+    function dateInSaoPaulo(dateStr) {
+      if (!dateStr) return null;
+      const d = new Date(dateStr);
+      d.setHours(d.getHours() + 3);
+      return d;
+    }
+    function getDateStrSP(dateStr) {
+      const d = dateInSaoPaulo(dateStr);
+      if (!d) return '';
+      return d.getFullYear() + '-' +
+             (d.getMonth() + 1).toString().padStart(2, '0') + '-' +
+             d.getDate().toString().padStart(2, '0');
+    }
+    // Dia de hoje em São Paulo (UTC-3)
+    const now = new Date();
+    now.setHours(now.getHours() + 3);
+    const todayStrSP = now.getFullYear() + '-' +
+                       (now.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                       now.getDate().toString().padStart(2, '0');
+  %>
+  <table class="calendar">
+    <thead>
+      <tr>
+        <th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%
+        let day = 1;
+        for (let week = 0; week < 6; week++) {
+      %>
+        <tr>
+        <% for (let dow = 0; dow < 7; dow++) {
+          const cellDate = new Date(currentYear, currentMonth - 1, day);
+          const cellDateStr = cellDate.getFullYear() + '-' +
+                              (cellDate.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                              cellDate.getDate().toString().padStart(2, '0');
+          const isToday = (cellDateStr === todayStrSP);
+          const isSelected = (cellDateStr === selectedDay);
+          const isThisMonth = (week > 0 || dow >= firstDayOfWeek) && day <= daysInMonth;
+          let slots = [];
+          if (isThisMonth && availabilityByDay[cellDateStr]) {
+            slots = availabilityByDay[cellDateStr];
+          }
+          const hasSlot = slots.length > 0;
+        %>
+          <td class="calendar-day
+            <% if (isThisMonth) { %>
+              <% if (isToday) { %> today<% } %>
+              <% if (isSelected) { %> selected<% } %>
+              <% if (hasSlot) { %> has-slot<% } %>
+            <% } %>"
+            <% if (isThisMonth) { %>
+              onclick="selectDay('<%= cellDateStr %>')"
+              title="Clique para ver horários"
+            <% } %>
+          >
+            <% if (isThisMonth) { %>
+              <div><%= day %></div>
+              <% if (slots.length > 0) { %>
+                <div style="font-size:0.8em; margin-top:0.2em;">
+                  <% slots.forEach(slot => { %>
+                    <div class="slot"><%= slot %></div>
+                  <% }) %>
+                </div>
+              <% } else { %>
+                <div class="no-slots">Sem horários</div>
+              <% } %>
+              <% if (isSelected) { %>
+                <div style="margin-top:0.2em; color:#007bff; font-size:0.85em; font-weight:bold;">Selecionado</div>
+              <% } %>
+            <% } %>
+          </td>
+        <% if (isThisMonth) day++; } %>
+        </tr>
+        <% if (day > daysInMonth) break; %>
+      <% } %>
+    </tbody>
+  </table>
+  <h2>Horários disponíveis no dia <%= selectedDay %></h2>
+  <form id="visitForm" method="get" action="/client/schedule/<%= broker.id %>/<%= property.id %>/book">
+    <ul>
+      <% if (availabilityByDay[selectedDay] && availabilityByDay[selectedDay].length > 0) { %>
+        <% availabilityByDay[selectedDay].forEach(slot => { %>
+          <li>
+            <label>
+              <input type="radio" name="slot" value="<%= slot %>" required>
+              <%= slot %>
+            </label>
+          </li>
+        <% }) %>
+      <% } else { %>
+        <li>Nenhum horário disponível.</li>
+      <% } %>
+    </ul>
+    <% if (availabilityByDay[selectedDay] && availabilityByDay[selectedDay].length > 0) { %>
+      <input type="hidden" name="day" value="<%= selectedDay %>">
+      <button type="submit">Marcar visita</button>
+    <% } %>
+  </form>
+</body>
+</html>

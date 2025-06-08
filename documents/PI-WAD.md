@@ -95,7 +95,7 @@ T - É fácil criar testes para verificar se o gerente consegue visualizar todas
 <sub align="center">Figura 2 - Diagrama do banco de dados  </sub>
 </div>
 <div align="center">
-<img src="./assetsWAD/dbdiagramClickVisit.png" alt="diagramaBD" border="0" width=100% height=100%>
+<img src="./assetsWAD/dbClickVisit_08_06_2025.png" alt="diagramaBD" border="0" width=100% height=100%>
 </div>
 <div align="center">
 <sup>Fonte: Victor Grycajuk, 2025.</sup>
@@ -104,77 +104,7 @@ T - É fácil criar testes para verificar se o gerente consegue visualizar todas
 #### SQL completo
 
 Disponível em [`ClickVisit.sql`](../scripts/ClickVisit.sql), ou
-<details>
-  <summary>Clique para expandir</summary>
 
-```sql
-CREATE TABLE "agencies" (
-  "id" INTEGER PRIMARY KEY NOT NULL,
-  "name" TEXT NOT NULL
-);
-
-CREATE TABLE "brokers" (
-  "id" INTEGER PRIMARY KEY NOT NULL,
-  "agency_id" INTEGER NOT NULL,
-  "name" TEXT NOT NULL,
-  "email" TEXT NOT NULL,
-  "phone" TEXT NOT NULL,
-  "creci" TEXT NOT NULL
-);
-
-CREATE TABLE "properties" (
-  "id" INTEGER PRIMARY KEY NOT NULL,
-  "agency_id" INTEGER NOT NULL,
-  "address" TEXT NOT NULL,
-  "price" INTEGER NOT NULL,
-  "status" TEXT NOT NULL
-);
-
-CREATE TABLE "events" (
-  "id" INTEGER PRIMARY KEY NOT NULL,
-  "event_type" TEXT NOT NULL,
-  "property_id" INTEGER NOT NULL,
-  "starts_at" TIMESTAMP(0) NOT NULL,
-  "ends_at" TIMESTAMP(0) NOT NULL,
-  "description" TEXT
-);
-
-CREATE TABLE "clients" (
-  "id" INTEGER PRIMARY KEY NOT NULL,
-  "name" TEXT NOT NULL,
-  "email" TEXT NOT NULL,
-  "phone" TEXT NOT NULL
-);
-
-CREATE TABLE "visits" (
-  "id" INTEGER PRIMARY KEY NOT NULL,
-  "client_id" INTEGER NOT NULL,
-  "broker_id" INTEGER NOT NULL,
-  "property_id" INTEGER NOT NULL,
-  "starts_at" TIMESTAMP(0) NOT NULL,
-  "ends_at" TIMESTAMP(0) NOT NULL,
-  "status" TEXT NOT NULL
-);
-
-COMMENT ON COLUMN "events"."event_type" IS '"Available","maintenance"';
-
-COMMENT ON COLUMN "visits"."status" IS '"confirmed", "canceled"';
-
-ALTER TABLE "brokers" ADD CONSTRAINT "brokers_agency_id_foreign" FOREIGN KEY ("agency_id") REFERENCES "agencies" ("id");
-
-ALTER TABLE "events" ADD CONSTRAINT "events_property_id_foreign" FOREIGN KEY ("property_id") REFERENCES "properties" ("id");
-
-ALTER TABLE "visits" ADD CONSTRAINT "visits_property_id_foreign" FOREIGN KEY ("property_id") REFERENCES "properties" ("id");
-
-ALTER TABLE "visits" ADD CONSTRAINT "visits_broker_id_foreign" FOREIGN KEY ("broker_id") REFERENCES "brokers" ("id");
-
-ALTER TABLE "properties" ADD CONSTRAINT "properties_agency_id_foreign" FOREIGN KEY ("agency_id") REFERENCES "agencies" ("id");
-
-ALTER TABLE "visits" ADD CONSTRAINT "visits_client_id_foreign" FOREIGN KEY ("client_id") REFERENCES "clients" ("id");
-
-
-```
-</details>
 
 ### 3.1.1 BD e Models (Semana 5)
 #### Os models implementados até o momento, 24/05/2025 são:
@@ -298,7 +228,43 @@ Representa as funcionalidades descritas no User Story 03.
 
 ### 3.7 Interface e Navegação (Semana 07)
 
-*Descreva e ilustre aqui o desenvolvimento do frontend do sistema web, explicando brevemente o que foi entregue em termos de código e sistema. Utilize prints de tela para ilustrar.*
+Grande parte das telas ainda estão grosseiras, toda a fucionalidade foi implementada mas ainda faltam alguns polimentos, como: 
+- Troca das cores para o laranja D85927 e FFEFE9
+- Organização dos elementos na tela como planejado no protótipo HI-Fi.
+- Rodapé e sidebar
+- Imagens e logos
+
+Aqui estão algumas imagens das principais telas:
+
+<div align="center">
+<sub align="center">Figura 8 - Agenda da Propriedade  </sub>
+</div>
+<div align="center">
+<img src="./assetsWAD/agendaDaPropriedade.png" alt="pagendaDaPropriedade" border="0" width=100% height=100%>
+</div>
+<div align="center">
+<sup>Fonte: Victor Grycajuk, 2025.</sup>
+</div>
+
+<div align="center">
+<sub align="center">Figura 9 - Agenda do corretor  </sub>
+</div>
+<div align="center">
+<img src="./assetsWAD/agendaDeDisponibilidade.png" alt="pagendaDaPropriedade" border="0" width=100% height=100%>
+</div>
+<div align="center">
+<sup>Fonte: Victor Grycajuk, 2025.</sup>
+</div>
+
+<div align="center">
+<sub align="center">Figura 10 - Agendamento  </sub>
+</div>
+<div align="center">
+<img src="./assetsWAD/clientSchedule.png" alt="pagendaDaPropriedade" border="0" width=100% height=100%>
+</div>
+<div align="center">
+<sup>Fonte: Victor Grycajuk, 2025.</sup>
+</div>
 
 ---
 

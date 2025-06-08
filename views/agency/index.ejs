@@ -2,44 +2,53 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Agências Cadastradas</title>
+  <title>Propriedades da Agência <%= agencyName %></title>
   <style>
     table { border-collapse: collapse; }
-    th, td { padding:.4rem .8rem; border:1px solid #666; }
-    form.inline { display:inline; margin:0 .2rem; }
+    th, td { padding: .4rem .8rem; border: 1px solid #666; }
+    form.inline { display:inline; }
   </style>
 </head>
 <body>
+  <div style="text-align:right;">
+    <a href="/logout"><button>Logout</button></a>
+  </div>
 
-  <h1>Agências Cadastradas</h1>
+  <% if (typeof isAdmin !== 'undefined' && isAdmin) { %>
+    <p>
+      <a href="/admin"><button>Voltar para lista de Agências</button></a>
+    </p>
+  <% } %>
 
+  <h1>Propriedades da Agência <%= agencyName %></h1>
   <table>
     <thead>
       <tr>
         <th>ID</th>
-        <th>Nome</th>
+        <th>Endereço</th>
+        <th>Preço</th>
+        <th>Status</th>
         <th>Ações</th>
       </tr>
     </thead>
     <tbody>
-      <% agencies.forEach(a => { %>
+      <% if (properties.length === 0) { %>
+        <tr><td colspan="5">Nenhuma propriedade cadastrada.</td></tr>
+      <% } %>
+      <% properties.forEach(prop => { %>
         <tr>
-          <td><%= a.id %></td>
-          <td><%= a.name %></td>
+          <td><%= prop.id %></td>
+          <td><%= prop.address %></td>
+          <td>R$ <%= prop.price.toLocaleString('pt-BR') %></td>
+          <td><%= prop.status %></td>
           <td>
-            <!-- BOTÃO PROPERTIES -->
-            <a href="/agencies/<%= a.id %>/properties">
-              <button type="button">Propriedades</button>
-            </a>
-
-            <!-- EXCLUIR -->
-            <form class="inline" action="/agencies/delete/<%= a.id %>" method="POST">
+            <form class="inline" action="/agencies/<%= agencyId %>/properties/delete/<%= prop.id %>" method="POST">
               <button type="submit">Deletar</button>
             </form>
-
-            <!-- EDITAR -->
-            <form class="inline" action="/agencies/edit/<%= a.id %>" method="POST">
-              <input name="name" placeholder="Novo nome" required>
+            <form class="inline" action="/agencies/<%= agencyId %>/properties/edit/<%= prop.id %>" method="POST">
+              <input name="address"  placeholder="Endereço" value="<%= prop.address %>" required>
+              <input name="price"    placeholder="Preço"    type="number" value="<%= prop.price %>" required>
+              <input name="status"   placeholder="Status"   value="<%= prop.status %>" required>
               <button type="submit">Editar</button>
             </form>
           </td>
@@ -47,13 +56,12 @@
       <% }) %>
     </tbody>
   </table>
-
-  <!-- NOVA AGÊNCIA -->
-  <h2>Cadastrar Nova Agência</h2>
-  <form action="/agencies" method="POST">
-    <input name="name" placeholder="Nome da agência" required>
+  <h2>Cadastrar nova propriedade</h2>
+  <form action="/agencies/<%= agencyId %>/properties" method="POST">
+    <input name="address" placeholder="Endereço" required>
+    <input name="price"   placeholder="Preço (R$)" type="number" required>
+    <input name="status"  placeholder="Status (ex.: disponível)" required>
     <button type="submit">Adicionar</button>
   </form>
-
 </body>
 </html>

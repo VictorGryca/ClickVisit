@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Propriedades da Agência <%= agencyId %></title>
+  <title>Propriedades da Agência <%= agencyName %></title>
   <style>
     table { border-collapse: collapse; }
     th, td { padding: .4rem .8rem; border: 1px solid #666; }
@@ -11,10 +11,13 @@
 </head>
 <body>
 
-  <!-- Navegação simples -->
-  <p><a href="/agencies">← Voltar para lista de agências</a></p>
+  <div style="text-align:right;">
+    <a href="/logout"><button>Logout</button></a>
+  </div>
 
-  <h1>Propriedades da Agência <%= agencyId %></h1>
+  <!-- Removido o link para lista de agências -->
+
+  <h1>Propriedades da Agência <%= agencyName %></h1>
 
   <!-- LISTAGEM -->
   <table>
@@ -24,14 +27,14 @@
         <th>Endereço</th>
         <th>Preço</th>
         <th>Status</th>
+        <th>Corretores</th>
         <th>Ações</th>
       </tr>
     </thead>
     <tbody>
       <% if (properties.length === 0) { %>
-        <tr><td colspan="5">Nenhuma propriedade cadastrada.</td></tr>
+        <tr><td colspan="6">Nenhuma propriedade cadastrada.</td></tr>
       <% } %>
-
       <% properties.forEach(prop => { %>
         <tr>
           <td><%= prop.id %></td>
@@ -39,11 +42,44 @@
           <td>R$ <%= prop.price.toLocaleString('pt-BR') %></td>
           <td><%= prop.status %></td>
           <td>
+            <!-- Brokers vinculados -->
+            <div>
+              <ul style="margin:0; padding-left:1em;">
+                <% if (prop.brokers && prop.brokers.length > 0) { %>
+                  <% prop.brokers.forEach(b => { %>
+                    <li>
+                      <%= b.name %>
+                      <form action="/agencies/<%= agencyId %>/properties/<%= prop.id %>/remove-broker/<%= b.id %>" method="POST" style="display:inline;">
+                        <button type="submit" style="font-size:0.8em;">Remover</button>
+                      </form>
+                    </li>
+                  <% }) %>
+                <% } else { %>
+                  <li>Nenhum broker vinculado</li>
+                <% } %>
+              </ul>
+            </div>
+            <!-- Adicionar broker (dropdown) -->
+            <form action="/agencies/<%= agencyId %>/properties/<%= prop.id %>/add-broker" method="POST" style="margin-top:0.5em;">
+              <select name="broker_id" required>
+                <option value="">Selecionar broker...</option>
+                <% allBrokers.forEach(b => { %>
+                  <% if (!prop.brokers.some(pb => pb.id === b.id)) { %>
+                    <option value="<%= b.id %>"><%= b.name %></option>
+                  <% } %>
+                <% }) %>
+              </select>
+              <button type="submit">Adicionar</button>
+            </form>
+          </td>
+          <td>
+            <a href="/agencies/<%= agencyId %>/properties/<%= prop.id %>">
+              <button type="button">Ver Agenda</button>
+            </a>
             <!-- EXCLUIR -->
             <form class="inline" action="/agencies/<%= agencyId %>/properties/delete/<%= prop.id %>" method="POST">
               <button type="submit">Deletar</button>
             </form>
-
             <!-- EDITAR -->
             <form class="inline" action="/agencies/<%= agencyId %>/properties/edit/<%= prop.id %>" method="POST">
               <input name="address"  placeholder="Endereço" value="<%= prop.address %>" required>

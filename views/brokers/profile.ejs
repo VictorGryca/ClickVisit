@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Perfil do Corretor <%= broker.name %></title>
+</head>
+<body>
+  <div style="text-align:right;">
+    <a href="/logout"><button>Logout</button></a>
+  </div>
+  <h1>Perfil do Corretor</h1>
+  <form action="/brokers/<%= broker.id %>/edit" method="POST">
+    <ul>
+      <li>
+        <strong>ID:</strong> <%= broker.id %>
+      </li>
+      <li>
+        <strong>Nome:</strong>
+        <input type="text" name="name" value="<%= broker.name %>" required>
+      </li>
+      <li>
+        <strong>Email:</strong>
+        <input type="email" name="email" value="<%= broker.email %>" required>
+      </li>
+      <li>
+        <strong>Telefone:</strong>
+        <input type="text" name="phone" value="<%= broker.phone %>" required>
+      </li>
+      <li>
+        <strong>CRECI:</strong>
+        <input type="text" name="creci" value="<%= broker.creci %>" required>
+      </li>
+    </ul>
+    <button type="submit">Salvar Alterações</button>
+  </form>
+  <a href="/brokers/<%= broker.id %>/visits">
+    <button>Ver Visitas Agendadas</button>
+  </a>
+  <a href="/brokers/<%= broker.id %>/agenda">
+    <button>Ver/Editar Agenda</button>
+  </a>
+  <a href="/brokers/<%= broker.id %>/properties">
+    <button>Ver Imóveis Associados</button>
+  </a>
+</body>
+</html>
