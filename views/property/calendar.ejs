@@ -44,6 +44,35 @@
     </strong>
     <button onclick="changeMonth(1)">Próximo mês &gt;</button>
   </div>
+  <%
+    // Função para criar Date em UTC-3 (São Paulo)
+    function dateInSaoPaulo(dateStr) {
+      if (!dateStr) return null;
+      // Sempre trata como UTC e converte para UTC-3
+      const d = new Date(dateStr);
+      // Ajusta para UTC-3 (São Paulo)
+      d.setHours(d.getHours() - 3);
+      return d;
+    }
+    function getDateStrSP(dateStr) {
+      const d = dateInSaoPaulo(dateStr);
+      if (!d) return '';
+      return d.getFullYear() + '-' +
+             (d.getMonth() + 1).toString().padStart(2, '0') + '-' +
+             d.getDate().toString().padStart(2, '0');
+    }
+    function formatHourSP(dateStr) {
+      const d = dateInSaoPaulo(dateStr);
+      if (!d) return '';
+      return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+    }
+    // Dia de hoje em São Paulo (UTC-3)
+    const now = new Date();
+    now.setHours(now.getHours() - 3);
+    const todayStrSP = now.getFullYear() + '-' +
+                       (now.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                       now.getDate().toString().padStart(2, '0');
+  %>
   <table class="calendar">
     <thead>
       <tr>
@@ -58,16 +87,17 @@
         <tr>
         <% for (let dow = 0; dow < 7; dow++) { 
           const cellDate = new Date(currentYear, currentMonth - 1, day);
-          const cellDateStr = cellDate.toISOString().slice(0,10);
-          const isToday = (cellDateStr === todayStr);
+          const cellDateStr = cellDate.getFullYear() + '-' +
+                              (cellDate.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                              cellDate.getDate().toString().padStart(2, '0');
+          const isToday = (cellDateStr === todayStrSP);
           const isSelected = (cellDateStr === selectedDay);
           const isThisMonth = (week > 0 || dow >= firstDayOfWeek) && day <= daysInMonth;
           let hasEvent = false;
           let eventsForDay = [];
           if (isThisMonth) {
             eventsForDay = events.filter(ev => {
-              const d = new Date(ev.starts_at);
-              return d.getFullYear() === cellDate.getFullYear() && d.getMonth() === cellDate.getMonth() && d.getDate() === cellDate.getDate();
+              return getDateStrSP(ev.starts_at) === cellDateStr;
             });
             hasEvent = eventsForDay.length > 0;
           }
@@ -90,12 +120,7 @@
                   <% eventsForDay.forEach(ev => { %>
                     <div>
                       <span style="background:#ffe4b3; border-radius:3px; padding:1px 4px;">
-                        <% 
-                          // Sempre UTC para bater com o banco
-                          const d = new Date(ev.starts_at);
-                          const h = d.getUTCHours().toString().padStart(2, '0') + ':' + d.getUTCMinutes().toString().padStart(2, '0');
-                        %>
-                        <%= ev.event_type %> (<%= h %>)
+                        <%= ev.event_type %> (<%= formatHourSP(ev.starts_at) %>)
                       </span>
                     </div>
                   <% }) %>
