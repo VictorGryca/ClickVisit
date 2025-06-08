@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Agenda do Cliente</title>
+  <style>
+    table { border-collapse: collapse; }
+    th, td { padding: .4rem .8rem; border: 1px solid #666; text-align: center; }
+    .calendar { margin: 1.5rem 0; }
+    .calendar th { background: #eee; }
+    .calendar-day { cursor: pointer; min-width: 80px; }
+    .calendar-day.has-availability { background: #d4ffd4; }
+    .calendar-day.today { border: 2px solid #007bff; }
+    .calendar-day.selected { background: #b3d7ff; }
+    .calendar-day:hover { background: #f0f8ff; }
+    .slot-available { background: #d4ffd4; border-radius: 3px; margin: 2px; display: inline-block; padding: 2px 6px; }
+  </style>
+  <script>
+    function changeMonth(delta) {
+      const url = new URL(window.location.href);
+      let month = parseInt(url.searchParams.get('month') || '<%= currentMonth %>');
+      let year = parseInt(url.searchParams.get('year') || '<%= currentYear %>');
+      month += delta;
+      if (month < 1) { month = 12; year--; }
+      if (month > 12) { month = 1; year++; }
+      url.searchParams.set('month', month);
+      url.searchParams.set('year', year);
+      window.location.href = url.toString();
+    }
+  </script>
+</head>
+<body>
+  <h1>Agenda do Cliente</h1>
+  <h2>Corretor: <%= broker.name %> | Imóvel: <%= property.address %></h2>
+  <div>
+    <button onclick="changeMonth(-1)">&lt; Mês anterior</button>
+    <strong>
+      <%= currentMonth %> / <%= currentYear %>
+    </strong>
+    <button onclick="changeMonth(1)">Próximo mês &gt;</button>
+  </div>
+  <table class="calendar">
+    <thead>
+      <tr>
+        <th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% 
+        let day = 1;
+        for (let week = 0; week < 6; week++) { 
+      %>
+        <tr>
+        <% for (let dow = 0; dow < 7; dow++) { 
+          const cellDate = new Date(currentYear, currentMonth - 1, day);
+          const cellDateStr = cellDate.getFullYear() + '-' +
+                              (cellDate.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                              cellDate.getDate().toString().padStart(2, '0');
+          const isToday = (cellDateStr === todayStr);
+          const isThisMonth = (week > 0 || dow >= firstDayOfWeek) && day <= daysInMonth;
+        %>
+          <td class="calendar-day<%= isThisMonth && availableByDay[cellDateStr] && availableByDay[cellDateStr].length > 0 ? ' has-availability' : '' %><%= isThisMonth && isToday ? ' today' : '' %>">
+            <% if (isThisMonth) { %>
+              <div><%= day %></div>
+              <% if (availableByDay[cellDateStr] && availableByDay[cellDateStr].length > 0) { %>
+                <div style="margin-top:0.2em;">
+                  <% availableByDay[cellDateStr].forEach(slot => { %>
+                    <span class="slot-available"><%= slot %></span>
+                  <% }) %>
+                </div>
+              <% } %>
+            <% } %>
+          </td>
+        <% if (isThisMonth) day++; } %>
+        </tr>
+        <% if (day > daysInMonth) break; %>
+      <% } %>
+    </tbody>
+  </table>
+</body>
+</html>

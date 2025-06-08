@@ -50,8 +50,8 @@
       if (!dateStr) return null;
       // Sempre trata como UTC e converte para UTC-3
       const d = new Date(dateStr);
-      // Ajusta para UTC-3 (São Paulo)
-      d.setHours(d.getHours() - 3);
+      // Corrija: para UTC-3, some 3 horas ao UTC (não subtraia!)
+      d.setHours(d.getHours() + 3);
       return d;
     }
     function getDateStrSP(dateStr) {
@@ -68,7 +68,7 @@
     }
     // Dia de hoje em São Paulo (UTC-3)
     const now = new Date();
-    now.setHours(now.getHours() - 3);
+    now.setHours(now.getHours() + 3);
     const todayStrSP = now.getFullYear() + '-' +
                        (now.getMonth() + 1).toString().padStart(2, '0') + '-' +
                        now.getDate().toString().padStart(2, '0');
@@ -177,8 +177,7 @@
     <tbody>
       <% 
         const selectedEvents = events.filter(ev => {
-          const d = new Date(ev.starts_at);
-          return d.toISOString().slice(0, 10) === selectedDay;
+          return getDateStrSP(ev.starts_at) === selectedDay;
         });
         if (selectedEvents.length === 0) { 
       %>
@@ -188,18 +187,10 @@
         <tr>
           <td><%= ev.event_type %></td>
           <td>
-            <% 
-              const dStart = new Date(ev.starts_at);
-              const hStart = dStart.getUTCHours().toString().padStart(2, '0') + ':' + dStart.getUTCMinutes().toString().padStart(2, '0');
-            %>
-            <%= hStart %>
+            <%= formatHourSP(ev.starts_at) %>
           </td>
           <td>
-            <% 
-              const dEnd = new Date(ev.ends_at);
-              const hEnd = dEnd.getUTCHours().toString().padStart(2, '0') + ':' + dEnd.getUTCMinutes().toString().padStart(2, '0');
-            %>
-            <%= hEnd %>
+            <%= formatHourSP(ev.ends_at) %>
           </td>
           <td><%= ev.description || '' %></td>
           <td>

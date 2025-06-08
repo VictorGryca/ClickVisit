@@ -22,11 +22,12 @@
         <th>Preço</th>
         <th>Status</th>
         <th>Agência</th>
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody>
       <% if (properties.length === 0) { %>
-        <tr><td colspan="5">Nenhum imóvel associado.</td></tr>
+        <tr><td colspan="6">Nenhum imóvel associado.</td></tr>
       <% } %>
       <% properties.forEach(p => { %>
         <tr>
@@ -35,6 +36,11 @@
           <td>R$ <%= p.price.toLocaleString('pt-BR') %></td>
           <td><%= p.status %></td>
           <td><%= p.agency_name %></td>
+          <td>
+            <a href="/client/calendar/<%= broker.id %>/<%= p.id %>">
+              <button type="button">Ver Agenda Cliente</button>
+            </a>
+          </td>
         </tr>
       <% }) %>
     </tbody>
