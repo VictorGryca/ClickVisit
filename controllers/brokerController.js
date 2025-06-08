@@ -40,3 +40,18 @@ exports.visits = async (req, res) => {
     res.status(500).send('Erro ao buscar visitas do corretor.');
   }
 };
+
+// Lista de imóveis associados ao corretor
+exports.properties = async (req, res) => {
+  const brokerId = req.params.id;
+  try {
+    const broker = await Broker.findBasicById(brokerId);
+    if (!broker) return res.status(404).send('Corretor não encontrado.');
+
+    const properties = await Broker.getAssociatedProperties(brokerId);
+
+    res.render('brokers/properties', { broker, properties });
+  } catch (err) {
+    res.status(500).send('Erro ao buscar imóveis do corretor.');
+  }
+};

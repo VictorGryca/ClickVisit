@@ -61,4 +61,17 @@ module.exports = {
     const query = 'DELETE FROM availability WHERE id = $1 AND broker_id = $2';
     return db.query(query, [availabilityId, brokerId]);
   },
+
+  async getAssociatedProperties(brokerId) {
+    const query = `
+      SELECT p.id, p.address, p.price, p.status, a.name AS agency_name
+        FROM "brokerProperty" bp
+        JOIN properties p ON bp.property_id = p.id
+        JOIN agencies a ON p.agency_id = a.id
+       WHERE bp.broker_id = $1
+       ORDER BY a.name, p.address
+    `;
+    const result = await db.query(query, [brokerId]);
+    return result.rows;
+  },
 };
