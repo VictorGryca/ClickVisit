@@ -10,7 +10,21 @@ module.exports = {
       `SELECT * FROM events WHERE property_id = $1 AND starts_at::date BETWEEN $2 AND $3 ORDER BY starts_at`,
       [propertyId, start, end]
     );
-    return result.rows;
+    // Ajusta datas para UTC-3
+    const rows = result.rows.map(ev => {
+      const adjust = dateStr => {
+        if (!dateStr) return null;
+        const d = new Date(dateStr);
+        d.setHours(d.getHours() - 3);
+        return d;
+      };
+      return {
+        ...ev,
+        starts_at: adjust(ev.starts_at),
+        ends_at: adjust(ev.ends_at)
+      };
+    });
+    return rows;
   },
 
   async addEvent(data) {

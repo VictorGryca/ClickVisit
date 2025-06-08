@@ -88,10 +88,10 @@ exports.addEvent = async (req, res, next) => {
   const { agencyId, propertyId } = req.params;
   const { day, event_type, starts_at, ends_at, description } = req.body;
 
-  // Corrige os campos starts_at e ends_at para serem timestamps completos
-  // day: "YYYY-MM-DD", starts_at: "HH:MM", ends_at: "HH:MM"
-  const startsAtFull = `${day}T${starts_at}:00`;
-  const endsAtFull = `${day}T${ends_at}:00`;
+  // Gera timestamps completos com timezone de São Paulo (UTC-3)
+  // Exemplo: 2024-06-07T14:00:00-03:00
+  const startsAtFull = `${day}T${starts_at}:00-03:00`;
+  const endsAtFull = `${day}T${ends_at}:00-03:00`;
 
   await require('../models/event').addEvent({
     property_id: propertyId,
