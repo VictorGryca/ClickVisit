@@ -198,9 +198,17 @@
             <%= a.description ? a.description : '' %>
           </td>
           <td>
-            <form action="/brokers/<%= broker.id %>/agenda/delete/<%= a.id %>" method="POST" style="display:inline;">
-              <button type="submit" onclick="return confirm('Deseja remover esta disponibilidade?')">Remover</button>
-            </form>
+            <% if (a.description === 'visit') { %>
+              <button type="button" disabled title="Não é possível remover uma disponibilidade vinculada a uma visita agendada.">Indisponível</button>
+            <% } else { %>
+              <form action="/brokers/<%= broker.id %>/agenda/delete/<%= a.id %>" method="POST" style="display:inline;">
+                <button type="submit" 
+                        onclick="return confirm('Deseja remover esta disponibilidade?')"
+                        title="Remover esta disponibilidade">
+                  Remover
+                </button>
+              </form>
+            <% } %>
           </td>
         </tr>
       <% }) %>

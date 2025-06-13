@@ -102,6 +102,24 @@ exports.delete = async (req, res) => {
   const brokerId = req.params.id;
   const availabilityId = req.params.availId;
   try {
+    const db = require('../config/db');
+    // Busca a disponibilidade
+    const result = await db.query(
+      'SELECT description FROM availability WHERE id = $1 AND broker_id = $2',
+      [availabilityId, brokerId]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).send('Disponibilidade não encontrada.');
+    }
+    if (result.rows[0].description === 'visit') {
+      // Exibe popup e redireciona de volta
+      return res.send(`
+        <script>
+          alert('Não é possível remover uma disponibilidade vinculada a uma visita agendada.');
+          window.location.href = '/brokers/${brokerId}/agenda';
+        </script>
+      `);
+    }
     await require('../models/broker').deleteAvailability(brokerId, availabilityId);
     res.redirect(`/brokers/${brokerId}/agenda`);
   } catch (err) {
