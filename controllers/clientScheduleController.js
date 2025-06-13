@@ -157,6 +157,14 @@ exports.bookVisit = async (req, res) => {
       [clientId, brokerId, propertyId, starts_at, ends_at]
     );
 
+    // Atualiza apenas o agendamento de disponibilidade correspondente
+    await db.query(
+      `UPDATE availability
+       SET description = 'visit'
+       WHERE broker_id = $1 AND starts_at = $2 AND ends_at = $3`,
+      [brokerId, starts_at, ends_at]
+    );
+
     // Corrija aqui: busque o property para passar para a view de sucesso
     const Property = require('../models/property');
     const property = await Property.findById(propertyId);

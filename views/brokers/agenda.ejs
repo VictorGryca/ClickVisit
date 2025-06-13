@@ -158,6 +158,7 @@
       <tr>
         <th>Início</th>
         <th>Fim</th>
+        <th>Descrição</th>
         <th>Ações</th>
       </tr>
     </thead>
@@ -169,7 +170,7 @@
         });
         if (selectedAvail.length === 0) { 
       %>
-        <tr><td colspan="3">Nenhuma disponibilidade cadastrada para este dia.</td></tr>
+        <tr><td colspan="4">Nenhuma disponibilidade cadastrada para este dia.</td></tr>
       <% } %>
       <% selectedAvail.forEach(a => { %>
         <tr>
@@ -192,6 +193,9 @@
               }
             %>
             <%= fim %>
+          </td>
+          <td>
+            <%= a.description ? a.description : '' %>
           </td>
           <td>
             <form action="/brokers/<%= broker.id %>/agenda/delete/<%= a.id %>" method="POST" style="display:inline;">
