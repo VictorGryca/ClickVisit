@@ -140,11 +140,13 @@
     </label>
     <label>
       Início:
-      <input type="time" name="starts_at" required>
-    </label>
-    <label>
-      Fim:
-      <input type="time" name="ends_at" required>
+      <select name="starts_at" id="starts_at" required>
+        <option value="09:00">09:00</option>
+        <option value="10:30">10:30</option>
+        <option value="13:00">13:00</option>
+        <option value="14:30">14:30</option>
+        <option value="16:00">16:00</option>
+      </select>
     </label>
     <label>
       Descrição:
@@ -152,6 +154,37 @@
     </label>
     <button type="submit">Adicionar Evento</button>
   </form>
+  <script>
+    // Define os pares de horários permitidos
+    const slotMap = {
+      "09:00": "10:30",
+      "10:30": "12:00",
+      "13:00": "14:30",
+      "14:30": "16:00",
+      "16:00": "17:30"
+    };
+    function updateEndsAtOptions() {
+      const start = document.getElementById('starts_at').value;
+      const endsAt = document.getElementById('ends_at');
+      // Limpa opções
+      endsAt.innerHTML = '';
+      if (slotMap[start]) {
+        const opt = document.createElement('option');
+        opt.value = slotMap[start];
+        opt.textContent = slotMap[start];
+        endsAt.appendChild(opt);
+      }
+    }
+    // Inicializa o campo de fim ao carregar
+    document.addEventListener('DOMContentLoaded', function() {
+      updateEndsAtOptions();
+    });
+    // Garante que o campo de fim está correto ao submeter
+    function setEndsAt() {
+      updateEndsAtOptions();
+      return true;
+    }
+  </script>
 
   <h2>Eventos do Dia Selecionado</h2>
   <table>

@@ -84,23 +84,14 @@ exports.propertyCalendar = async (req, res, next) => {
   });
 };
 
-exports.addEvent = async (req, res, next) => {
-  const { agencyId, propertyId } = req.params;
-  const { day, event_type, starts_at, ends_at, description } = req.body;
-
-  // Gera timestamps completos com timezone de São Paulo (UTC-3)
-  // Exemplo: 2024-06-07T14:00:00-03:00
-  const startsAtFull = `${day}T${starts_at}:00-03:00`;
-  const endsAtFull = `${day}T${ends_at}:00-03:00`;
-
-  await require('../models/event').addEvent({
-    property_id: propertyId,
-    event_type,
-    starts_at: startsAtFull,
-    ends_at: endsAtFull,
-    description
-  });
-  res.redirect(`/agencies/${agencyId}/properties/${propertyId}`);
+exports.addEvent = async (req, res) => {
+  try {
+    // req.body já contém: event_type, starts_at, ends_at, description, day, property_id
+    await require('../models/event').addEvent(req.body);
+    res.redirect(`/agencies/${req.params.agencyId}/properties/${req.params.propertyId}?day=${req.body.day}`);
+  } catch (err) {
+    res.status(400).send('Horário inválido ou erro ao adicionar evento.');
+  }
 };
 
 exports.deleteEvent = async (req, res, next) => {
