@@ -86,7 +86,20 @@ exports.propertyCalendar = async (req, res, next) => {
 
 exports.addEvent = async (req, res) => {
   try {
-    // req.body já contém: event_type, starts_at, ends_at, description, day, property_id
+    const { property_id, day, starts_at, event_type, description } = req.body;
+    // Verifica se já existe evento neste dia e horário para a propriedade
+    const events = await require('../models/event').getEventsForPropertyMonth(property_id, day.slice(0, 4), day.slice(5, 7));
+    const exists = events.some(ev => {
+      // Compara o dia e o horário de início
+      const evDay = ev.starts_at.getFullYear() + '-' +
+        String(ev.starts_at.getMonth() + 1).padStart(2, '0') + '-' +
+        String(ev.starts_at.getDate()).padStart(2, '0');
+      const evHour = ev.starts_at.getHours().toString().padStart(2, '0') + ':' + ev.starts_at.getMinutes().toString().padStart(2, '0');
+      return evDay === day && evHour === starts_at;
+    });
+    if (exists) {
+      return res.status(400).send('Já existe um evento cadastrado neste horário para este dia.');
+    }
     await require('../models/event').addEvent(req.body);
     res.redirect(`/agencies/${req.params.agencyId}/properties/${req.params.propertyId}?day=${req.body.day}`);
   } catch (err) {

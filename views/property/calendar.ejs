@@ -128,6 +128,19 @@
     </tbody>
   </table>
 
+  <%
+    // Horários possíveis
+    const allowedSlots = ["09:00", "10:30", "13:00", "14:30", "16:00"];
+    // Horários já cadastrados para o dia selecionado
+    const takenSlots = events
+      .filter(ev => getDateStrSP(ev.starts_at) === selectedDay)
+      .map(ev => {
+        const d = dateInSaoPaulo(ev.starts_at);
+        return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+      });
+    // Horários disponíveis
+    const availableSlots = allowedSlots.filter(slot => !takenSlots.includes(slot));
+  %>
   <h2>Adicionar Evento</h2>
   <form action="/agencies/<%= agencyId %>/properties/<%= property.id %>/add-event" method="POST">
     <input type="hidden" name="day" value="<%= selectedDay %>">
@@ -140,19 +153,24 @@
     </label>
     <label>
       Início:
-      <select name="starts_at" id="starts_at" required>
-        <option value="09:00">09:00</option>
-        <option value="10:30">10:30</option>
-        <option value="13:00">13:00</option>
-        <option value="14:30">14:30</option>
-        <option value="16:00">16:00</option>
+      <select name="starts_at" id="starts_at" required <%= availableSlots.length === 0 ? 'disabled' : '' %>>
+        <% if (availableSlots.length === 0) { %>
+          <option value="">Nenhum horário disponível</option>
+        <% } else {
+            availableSlots.forEach(slot => { %>
+              <option value="<%= slot %>"><%= slot %></option>
+        <%   });
+          } %>
       </select>
     </label>
     <label>
       Descrição:
       <input type="text" name="description" maxlength="100">
     </label>
-    <button type="submit">Adicionar Evento</button>
+    <button type="submit" <%= availableSlots.length === 0 ? 'disabled' : '' %>>Adicionar Evento</button>
+    <% if (availableSlots.length === 0) { %>
+      <div style="color: #888; font-size: 0.95em; margin-top: 0.5em;">Todos os horários deste dia já estão ocupados.</div>
+    <% } %>
   </form>
   <script>
     // Define os pares de horários permitidos
