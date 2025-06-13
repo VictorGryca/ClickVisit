@@ -235,9 +235,13 @@
           </td>
           <td><%= ev.description || '' %></td>
           <td>
-            <form action="/agencies/<%= agencyId %>/properties/<%= property.id %>/delete-event/<%= ev.id %>" method="POST" style="display:inline;">
-              <button type="submit" onclick="return confirm('Deseja remover este evento?')">Remover</button>
-            </form>
+            <% if (ev.event_type === 'visit') { %>
+              <button type="button" disabled title="Não é possível remover um evento de visita agendada.">Indisponível</button>
+            <% } else { %>
+              <form action="/agencies/<%= agencyId %>/properties/<%= property.id %>/delete-event/<%= ev.id %>" method="POST" style="display:inline;">
+                <button type="submit" onclick="return confirm('Deseja remover este evento?')" title="Remover este evento">Remover</button>
+              </form>
+            <% } %>
           </td>
         </tr>
       <% }) %>
