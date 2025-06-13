@@ -25,11 +25,12 @@
         <th>Início</th>
         <th>Fim</th>
         <th>Status</th>
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody>
       <% if (visits.length === 0) { %>
-        <tr><td colspan="6">Nenhuma visita agendada.</td></tr>
+        <tr><td colspan="7">Nenhuma visita agendada.</td></tr>
       <% } %>
       <% visits.forEach(v => { %>
         <tr>
@@ -39,6 +40,11 @@
           <td><%= v.starts_at.toLocaleString('pt-BR') %></td>
           <td><%= v.ends_at.toLocaleString('pt-BR') %></td>
           <td><%= v.status %></td>
+          <td>
+            <form action="/brokers/<%= broker.id %>/visits/delete/<%= v.id %>" method="POST" style="display:inline;">
+              <button type="submit" onclick="return confirm('Deseja remover esta visita?')">Remover</button>
+            </form>
+          </td>
         </tr>
       <% }) %>
     </tbody>

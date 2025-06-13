@@ -84,23 +84,27 @@ exports.propertyCalendar = async (req, res, next) => {
   });
 };
 
-exports.addEvent = async (req, res, next) => {
-  const { agencyId, propertyId } = req.params;
-  const { day, event_type, starts_at, ends_at, description } = req.body;
-
-  // Gera timestamps completos com timezone de São Paulo (UTC-3)
-  // Exemplo: 2024-06-07T14:00:00-03:00
-  const startsAtFull = `${day}T${starts_at}:00-03:00`;
-  const endsAtFull = `${day}T${ends_at}:00-03:00`;
-
-  await require('../models/event').addEvent({
-    property_id: propertyId,
-    event_type,
-    starts_at: startsAtFull,
-    ends_at: endsAtFull,
-    description
-  });
-  res.redirect(`/agencies/${agencyId}/properties/${propertyId}`);
+exports.addEvent = async (req, res) => {
+  try {
+    const { property_id, day, starts_at, event_type, description } = req.body;
+    // Verifica se já existe evento neste dia e horário para a propriedade
+    const events = await require('../models/event').getEventsForPropertyMonth(property_id, day.slice(0, 4), day.slice(5, 7));
+    const exists = events.some(ev => {
+      // Compara o dia e o horário de início
+      const evDay = ev.starts_at.getFullYear() + '-' +
+        String(ev.starts_at.getMonth() + 1).padStart(2, '0') + '-' +
+        String(ev.starts_at.getDate()).padStart(2, '0');
+      const evHour = ev.starts_at.getHours().toString().padStart(2, '0') + ':' + ev.starts_at.getMinutes().toString().padStart(2, '0');
+      return evDay === day && evHour === starts_at;
+    });
+    if (exists) {
+      return res.status(400).send('Já existe um evento cadastrado neste horário para este dia.');
+    }
+    await require('../models/event').addEvent(req.body);
+    res.redirect(`/agencies/${req.params.agencyId}/properties/${req.params.propertyId}?day=${req.body.day}`);
+  } catch (err) {
+    res.status(400).send('Horário inválido ou erro ao adicionar evento.');
+  }
 };
 
 exports.deleteEvent = async (req, res, next) => {

@@ -10,7 +10,16 @@ router.post('/delete/:id', ctrl.destroy);
 
 // Novas rotas para agenda da propriedade
 router.get('/:propertyId', ctrl.propertyCalendar);
-router.post('/:propertyId/add-event', ctrl.addEvent);
+router.post('/:propertyId/add-event', async (req, res, next) => {
+  try {
+    // Inclui o campo day no corpo para o model
+    req.body.property_id = req.params.propertyId;
+    req.body.day = req.body.day;
+    await ctrl.addEvent(req, res, next);
+  } catch (err) {
+    next(err);
+  }
+});
 router.post('/:propertyId/delete-event/:eventId', ctrl.deleteEvent);
 
 router.post('/:propertyId/add-broker', ctrl.addBroker);
