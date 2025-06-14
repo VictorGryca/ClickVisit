@@ -13,6 +13,17 @@
     .calendar-day.today { border: 2px solid #007bff; }
     .calendar-day.selected { background: #b3d7ff !important; border: 2px solid #007bff; }
     .calendar-day:hover { background: #f0f8ff; }
+    .calendar-day.has-visit { background: #ffb3b3; }
+    .slot-avail { background: #d4ffd4; border-radius:3px; padding:1px 4px; }
+    .slot-visit { background: #ffb3b3; border-radius:3px; padding:1px 4px; }
+    .day-slots-box {
+      font-size: 0.8em;
+      margin-top: 0.2em;
+      border: 1px solid #999;
+      border-radius: 4px;
+      padding: 2px 4px;
+      display: inline-block;
+    }
   </style>
   <script>
   function selectDay(dateStr) {
@@ -70,7 +81,9 @@
           const isToday = (cellDateStr === todayStr);
           const isSelected = (cellDateStr === selectedDay);
           const isThisMonth = (week > 0 || dow >= firstDayOfWeek) && day <= daysInMonth;
-          let hasAvail = false;
+          let hasAvail = false;   // possui pelo menos uma disponibilidade
+          let hasVisit = false;   // possui pelo menos uma visita
+          let allVisit = false;   // todas as disponibilidades são visitas
           let availsForDay = [];
           if (isThisMonth) {
             availsForDay = availability.filter(a => {
@@ -78,13 +91,17 @@
               return d.getFullYear() === cellDate.getFullYear() && d.getMonth() === cellDate.getMonth() && d.getDate() === cellDate.getDate();
             });
             hasAvail = availsForDay.length > 0;
+            hasVisit = availsForDay.some(a => a.description === 'visit');
+            if (hasVisit && availsForDay.every(a => a.description === 'visit')) {
+              allVisit = true; // não há horário livre, tudo visit
+            }
           }
         %>
           <td class="calendar-day
             <% if (isThisMonth) { %>
               <% if (isToday) { %> today<% } %>
               <% if (isSelected) { %> selected<% } %>
-              <% if (hasAvail) { %> has-availability<% } %>
+              <% if (allVisit) { %> has-visit<% } else if (hasAvail) { %> has-availability<% } %>
             <% } %>"
             <% if (isThisMonth) { %>
               onclick="selectDay('<%= cellDateStr %>')"
@@ -94,14 +111,14 @@
             <% if (isThisMonth) { %>
               <div><%= day %></div>
               <% if (availsForDay.length > 0) { %>
-                <div style="font-size:0.8em; margin-top:0.2em;">
+                <div class="day-slots-box">
                   <% availsForDay.forEach(a => { %>
                     <div>
                       <% 
                         const d = new Date(a.starts_at);
                         const h = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
                       %>
-                      <span style="background:#d4ffd4; border-radius:3px; padding:1px 4px;"><%= h %></span>
+                      <span class="<%= a.description === 'visit' ? 'slot-visit' : 'slot-avail' %>"><%= h %></span>
                     </div>
                   <% }) %>
                 </div>
