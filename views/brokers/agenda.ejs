@@ -18,11 +18,29 @@
     .slot-visit { background: #ffb3b3; border-radius:3px; padding:1px 4px; }
     .day-slots-box {
       font-size: 0.8em;
-      margin-top: 0.2em;
+      margin-top: 0.3em;
       border: 1px solid #999;
       border-radius: 4px;
+      padding: 4px 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      align-items: stretch;
+      max-height: 110px;
+      overflow-y: auto;
+    }
+    .slot-avail, .slot-visit {
+      flex: 0 0 auto;
+      text-align: center;
+      font-size: 0.8em;
       padding: 2px 4px;
-      display: inline-block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .calendar td {
+      vertical-align: top;
+      min-height: 120px;
+      width: 110px;
     }
   </style>
   <script>
