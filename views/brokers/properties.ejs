@@ -7,13 +7,9 @@
   <link rel="stylesheet" href="/css/brokers-properties.css">
 </head>
 <body class="broker-layout">
-  <%- include('../partials/brokerSidebar', { broker: broker }) %>
+  <%- include('../partials/brokerSidebar', { broker: broker, active: 'properties' }) %>
   <main class="broker-main">
-    <div style="text-align:right;">
-      <a href="/logout"><button>Logout</button></a>
-    </div>
     <h1>Imóveis Associados ao Corretor <%= broker.name %></h1>
-    <a href="/brokers/<%= broker.id %>"><button>Voltar ao Perfil</button></a>
     <table>
       <thead>
         <tr>

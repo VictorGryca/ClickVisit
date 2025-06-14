@@ -6,11 +6,9 @@
   <link rel="stylesheet" href="/css/broker.css">
 </head>
 <body class="broker-layout">
-  <%- include('../partials/brokerSidebar', { broker: broker }) %>
+  <%- include('../partials/brokerSidebar', { broker: broker, active: 'profile' }) %>
   <main class="broker-main">
-    <div style="text-align:right;">
-      <a href="/logout"><button>Logout</button></a>
-    </div>
+
     <h1>Perfil do Corretor</h1>
     <form action="/brokers/<%= broker.id %>/edit" method="POST">
       <ul>
@@ -36,15 +34,7 @@
       </ul>
       <button type="submit">Salvar Alterações</button>
     </form>
-    <a href="/brokers/<%= broker.id %>/visits">
-      <button>Ver Visitas Agendadas</button>
-    </a>
-    <a href="/brokers/<%= broker.id %>/agenda">
-      <button>Ver/Editar Agenda</button>
-    </a>
-    <a href="/brokers/<%= broker.id %>/properties">
-      <button>Ver Imóveis Associados</button>
-    </a>
+
   </main>
 </body>
 </html>

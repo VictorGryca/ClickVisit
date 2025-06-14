@@ -7,15 +7,9 @@
   <link rel="stylesheet" href="/css/broker.css">
 </head>
 <body class="broker-layout">
-  <%- include('../partials/brokerSidebar', { broker: broker }) %>
+  <%- include('../partials/brokerSidebar', { broker: broker, active: 'visits' }) %>
   <main class="broker-main">
-    <div style="text-align:right;">
-      <a href="/logout"><button>Logout</button></a>
-    </div>
     <h1>Visitas Agendadas - <%= broker.name %></h1>
-    <a href="/brokers/<%= broker.id %>">
-      <button>Ver Perfil</button>
-    </a>
     <table>
       <thead>
         <tr>

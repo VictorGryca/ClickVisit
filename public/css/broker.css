@@ -57,14 +57,33 @@
   font-weight:600;
   text-transform:uppercase;
   font-size:14px;
+  display:block;
+  padding:8px 12px;
+  border-radius:6px;
 }
 
 .broker-sidebar nav a:hover {
   color:#e66331;
 }
 
+.broker-sidebar nav a.active {
+  background:#e66331;
+  color:#fff;
+}
+
 .broker-main {
   flex:1;
   padding:30px;
   box-sizing:border-box;
-} 
+}
+
+.broker-logout {
+  margin-top:auto;
+}
+.broker-logout a{
+  text-decoration:none;
+  color:#000;
+  font-weight:600;
+  font-size:14px;
+}
+.broker-logout a:hover{color:#e66331;} 

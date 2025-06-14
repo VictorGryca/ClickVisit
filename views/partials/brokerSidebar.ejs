@@ -10,10 +10,13 @@
   <h3><%= firstName %></h3>
   <nav>
     <ul>
-      <li><a href="/brokers/<%= broker.id %>">Corretor</a></li>
-      <li><a href="/brokers/<%= broker.id %>/agenda">Agenda</a></li>
-      <li><a href="/brokers/<%= broker.id %>/visits">Visitas</a></li>
-      <li><a href="/brokers/<%= broker.id %>/properties">Imóveis</a></li>
+      <li><a href="/brokers/<%= broker.id %>" class="<%= active==='profile' ? 'active' : '' %>">Corretor</a></li>
+      <li><a href="/brokers/<%= broker.id %>/agenda" class="<%= active==='agenda' ? 'active' : '' %>">Agenda</a></li>
+      <li><a href="/brokers/<%= broker.id %>/properties" class="<%= active==='properties' ? 'active' : '' %>">Imóveis</a></li>
+      <li><a href="/brokers/<%= broker.id %>/visits" class="<%= active==='visits' ? 'active' : '' %>">Visitas</a></li>
     </ul>
   </nav>
+  <div class="broker-logout">
+    <a href="/logout">Logout</a>
+  </div>
 </div> 

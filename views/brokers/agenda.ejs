@@ -29,11 +29,9 @@
   </script>
 </head>
 <body class="broker-layout">
-  <%- include('../partials/brokerSidebar', { broker: broker }) %>
+  <%- include('../partials/brokerSidebar', { broker: broker, active: 'agenda' }) %>
   <main class="broker-main">
-    <div style="text-align:right;">
-      <a href="/logout"><button>Logout</button></a>
-    </div>
+
     <h1>Agenda de Disponibilidade - <%= broker.name %></h1>
 
     <h2>Calendário</h2>
@@ -213,8 +211,6 @@
         <% }) %>
       </tbody>
     </table>
-
-    <a href="/brokers/<%= broker.id %>"><button>Voltar ao Perfil</button></a>
   </main>
 </body>
 </html>
