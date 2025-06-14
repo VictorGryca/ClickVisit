@@ -121,22 +121,14 @@ exports.bookVisit = async (req, res) => {
   const { brokerId, propertyId } = req.params;
   const { day, slot, name, phone, email } = req.body;
   try {
-    const db = require('../config/db');
-    // Busca cliente pelo email
-    let clientResult = await db.query(
-      'SELECT id FROM clients WHERE email = $1',
-      [email]
-    );
-    let clientId;
-    if (clientResult.rows.length > 0) {
-      clientId = clientResult.rows[0].id;
-    } else {
-      const insertClient = await db.query(
-        'INSERT INTO clients (name, phone, email) VALUES ($1, $2, $3) RETURNING id',
-        [name, phone, email]
-      );
-      clientId = insertClient.rows[0].id;
-    }
+    const Client = require('../models/client');
+    const Visit = require('../models/visit');
+    const Availability = require('../models/availability');
+    const Event = require('../models/event');
+
+    // Encontra ou cria o cliente
+    const client = await Client.findOrCreate({ name, phone, email });
+    const clientId = client.id;
 
     // Monta starts_at e ends_at a partir do slot
     const slotMap = {
@@ -152,28 +144,15 @@ exports.bookVisit = async (req, res) => {
     const starts_at = `${day}T${slotObj.start}:00-03:00`;
     const ends_at = `${day}T${slotObj.end}:00-03:00`;
 
-    await db.query(
-      'INSERT INTO visits (client_id, broker_id, property_id, starts_at, ends_at) VALUES ($1, $2, $3, $4, $5)',
-      [clientId, brokerId, propertyId, starts_at, ends_at]
-    );
+    // Cria a visita
+    await Visit.create({ clientId, brokerId, propertyId, starts_at, ends_at });
 
-    // Atualiza apenas o agendamento de disponibilidade correspondente
-    await db.query(
-      `UPDATE availability
-       SET description = 'visit'
-       WHERE broker_id = $1 AND starts_at = $2 AND ends_at = $3`,
-      [brokerId, starts_at, ends_at]
-    );
+    // Atualiza a disponibilidade do corretor
+    await Availability.updateDescription(brokerId, starts_at, ends_at, 'visit');
 
-    // Cria um event para a propriedade neste horário com event_type 'visit'
-    await db.query(
-      `INSERT INTO events (event_type, property_id, starts_at, ends_at, description)
-       VALUES ($1, $2, $3, $4, $5)`,
-      ['visit', propertyId, starts_at, ends_at, null]
-    );
+    // Cria o evento correspondente para o imóvel
+    await Event.addEventByTimestamps({ event_type: 'visit', property_id: propertyId, starts_at, ends_at, description: null });
 
-    // Corrija aqui: busque o property para passar para a view de sucesso
-    const Property = require('../models/property');
     const property = await Property.findById(propertyId);
 
     res.render('client/success', { name, day, slot, property });

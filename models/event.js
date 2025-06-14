@@ -58,5 +58,23 @@ module.exports = {
 
   async deleteEvent(eventId) {
     return db.query('DELETE FROM events WHERE id = $1', [eventId]);
+  },
+
+  async addEventByTimestamps({ event_type = 'visit', property_id, starts_at, ends_at, description = null }) {
+    const query = `
+      INSERT INTO events (event_type, property_id, starts_at, ends_at, description)
+      VALUES ($1, $2, $3, $4, $5)
+    `;
+    return db.query(query, [event_type, property_id, starts_at, ends_at, description]);
+  },
+
+  /**
+   * Remove evento referente ao imóvel e horário específico.
+   */
+  async deleteEventByDetails(propertyId, starts_at, ends_at, event_type = 'visit') {
+    return db.query(
+      `DELETE FROM events WHERE property_id = $1 AND starts_at = $2 AND ends_at = $3 AND event_type = $4`,
+      [propertyId, starts_at, ends_at, event_type]
+    );
   }
 };
