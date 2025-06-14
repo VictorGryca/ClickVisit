@@ -50,6 +50,7 @@ exports.index = async (req, res) => {
       todayStr,
       currentMonthName,
       selectedDay,
+      selectedDayDisplay: selectedDay.split('-').reverse().join('/'),
       availableSlots
     });
   } catch (err) {

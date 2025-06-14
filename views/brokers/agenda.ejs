@@ -9,7 +9,9 @@
   function selectDay(dateStr) {
     // Atualiza o campo hidden e o campo de data exibido
     document.getElementById('selectedDay').value = dateStr;
-    document.getElementById('dayDisplay').value = dateStr;
+    // Converte YYYY-MM-DD para DD/MM/YYYY para exibição
+    const parts = dateStr.split('-');
+    document.getElementById('dayDisplay').value = parts[2] + '/' + parts[1] + '/' + parts[0];
     // Redireciona para atualizar horários disponíveis e lista do dia
     const url = new URL(window.location.href);
     url.searchParams.set('day', dateStr);
@@ -122,8 +124,8 @@
           <input type="hidden" id="selectedDay" name="day" value="<%= selectedDay %>">
           <label>
             Dia:
-            <input type="date" name="day_display" id="dayDisplay" value="<%= selectedDay %>" required readonly
-              onclick="this.type='date';this.readOnly=false;">
+            <input type="text" name="day_display" id="dayDisplay" value="<%= selectedDayDisplay %>" placeholder="DD/MM/AAAA"
+                   pattern="\d{2}/\d{2}/\d{4}" required>
           </label>
           <label>
             Horário:
@@ -143,8 +145,11 @@
               var day = document.getElementById('dayDisplay').value;
               var time = this.time_slot.value;
               if (day && time) {
+                // Converte DD/MM/YYYY para YYYY-MM-DD
+                var parts = day.split('/');
+                var isoDate = parts[2] + '-' + parts[1] + '-' + parts[0];
                 // Monta o campo hidden "day" no formato YYYY-MM-DDTHH:MM:00-03:00
-                document.getElementById('selectedDay').value = day + 'T' + time + ':00-03:00';
+                document.getElementById('selectedDay').value = isoDate + 'T' + time + ':00-03:00';
               }
             };
           </script>
