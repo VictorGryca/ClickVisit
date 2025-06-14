@@ -1,0 +1,19 @@
+<div class="broker-sidebar">
+  <div class="avatar">
+    <% if (broker.photo_url) { %>
+      <img src="<%= broker.photo_url %>" alt="<%= broker.name %>">
+    <% } else { %>
+      <img src="/assets/avatar_placeholder.png" alt="avatar">
+    <% } %>
+  </div>
+  <% const firstName = broker.name.split(' ')[0]; %>
+  <h3><%= firstName %></h3>
+  <nav>
+    <ul>
+      <li><a href="/brokers/<%= broker.id %>">Corretor</a></li>
+      <li><a href="/brokers/<%= broker.id %>/agenda">Agenda</a></li>
+      <li><a href="/brokers/<%= broker.id %>/visits">Visitas</a></li>
+      <li><a href="/brokers/<%= broker.id %>/properties">Imóveis</a></li>
+    </ul>
+  </nav>
+</div> 

@@ -3,44 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <title>Imóveis Associados - <%= broker.name %></title>
+  <link rel="stylesheet" href="/css/broker.css">
   <link rel="stylesheet" href="/css/brokers-properties.css">
 </head>
-<body>
-  <div style="text-align:right;">
-    <a href="/logout"><button>Logout</button></a>
-  </div>
-  <h1>Imóveis Associados ao Corretor <%= broker.name %></h1>
-  <a href="/brokers/<%= broker.id %>"><button>Voltar ao Perfil</button></a>
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Endereço</th>
-        <th>Preço</th>
-        <th>Status</th>
-        <th>Agência</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% if (properties.length === 0) { %>
-        <tr><td colspan="6">Nenhum imóvel associado.</td></tr>
-      <% } %>
-      <% properties.forEach(p => { %>
+<body class="broker-layout">
+  <%- include('../partials/brokerSidebar', { broker: broker }) %>
+  <main class="broker-main">
+    <div style="text-align:right;">
+      <a href="/logout"><button>Logout</button></a>
+    </div>
+    <h1>Imóveis Associados ao Corretor <%= broker.name %></h1>
+    <a href="/brokers/<%= broker.id %>"><button>Voltar ao Perfil</button></a>
+    <table>
+      <thead>
         <tr>
-          <td><%= p.id %></td>
-          <td><%= p.address %></td>
-          <td>R$ <%= p.price.toLocaleString('pt-BR') %></td>
-          <td><%= p.status %></td>
-          <td><%= p.agency_name %></td>
-          <td>
-            <a href="/client/schedule/<%= broker.id %>/<%= p.id %>">
-              <button type="button">Ver Agenda Cliente</button>
-            </a>
-          </td>
+          <th>ID</th>
+          <th>Endereço</th>
+          <th>Preço</th>
+          <th>Status</th>
+          <th>Agência</th>
+          <th>Ações</th>
         </tr>
-      <% }) %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% if (properties.length === 0) { %>
+          <tr><td colspan="6">Nenhum imóvel associado.</td></tr>
+        <% } %>
+        <% properties.forEach(p => { %>
+          <tr>
+            <td><%= p.id %></td>
+            <td><%= p.address %></td>
+            <td>R$ <%= p.price.toLocaleString('pt-BR') %></td>
+            <td><%= p.status %></td>
+            <td><%= p.agency_name %></td>
+            <td>
+              <a href="/client/schedule/<%= broker.id %>/<%= p.id %>">
+                <button type="button">Ver Agenda Cliente</button>
+              </a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </main>
 </body>
 </html>
