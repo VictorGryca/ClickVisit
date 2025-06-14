@@ -1,0 +1,55 @@
+table { border-collapse: collapse; }
+th, td { padding: .4rem .8rem; border: 1px solid #666; text-align: center; }
+
+/* Calendar wrapper */
+.calendar { margin: 1.5rem 0; width: 100%; border-collapse: collapse; }
+.calendar th { background: #eee; font-weight: bold; }
+
+/* table cells */
+.calendar td {
+  vertical-align: top;
+  min-height: 120px;
+  width: 110px;
+}
+
+/* Calendar day states */
+.calendar-day { cursor: pointer; transition: background 0.2s; }
+.calendar-day.has-event { background: #ffe4b3; }
+.calendar-day.has-slot { background: #e6f7ff; }
+.calendar-day.has-availability { background: #d4ffd4; }
+.calendar-day.has-visit { background: #ffb3b3; }
+.calendar-day.today { border: 2px solid #007bff; }
+.calendar-day.selected { background: #b3d7ff; }
+.calendar-day:hover { background: #f0f8ff; }
+
+/* Slots / eventos dentro do dia */
+.day-slots-box {
+  font-size: 0.8em;
+  margin-top: 0.3em;
+  border: 1px solid #999;
+  border-radius: 4px;
+  padding: 4px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: stretch;
+  max-height: 110px;
+  overflow-y: auto;
+}
+
+.slot, .slot-avail, .slot-visit {
+  flex: 0 0 auto;
+  text-align: center;
+  font-size: 0.8em;
+  padding: 2px 4px;
+  border-radius: 3px;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.slot { background: #e6f7ff; }
+.slot-avail { background: #d4ffd4; }
+.slot-visit { background: #ffb3b3; }
+
+.no-slots { color: #bbb; font-size: 0.9em; } 

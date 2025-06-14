@@ -3,46 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Agenda de Disponibilidade - <%= broker.name %></title>
-  <style>
-    table { border-collapse: collapse; }
-    th, td { padding: .4rem .8rem; border: 1px solid #666; text-align: center; }
-    .calendar { margin: 1.5rem 0; }
-    .calendar th { background: #eee; }
-    .calendar-day { cursor: pointer; }
-    .calendar-day.has-availability { background: #d4ffd4; }
-    .calendar-day.today { border: 2px solid #007bff; }
-    .calendar-day.selected { background: #b3d7ff !important; border: 2px solid #007bff; }
-    .calendar-day:hover { background: #f0f8ff; }
-    .calendar-day.has-visit { background: #ffb3b3; }
-    .slot-avail { background: #d4ffd4; border-radius:3px; padding:1px 4px; }
-    .slot-visit { background: #ffb3b3; border-radius:3px; padding:1px 4px; }
-    .day-slots-box {
-      font-size: 0.8em;
-      margin-top: 0.3em;
-      border: 1px solid #999;
-      border-radius: 4px;
-      padding: 4px 6px;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      align-items: stretch;
-      max-height: 110px;
-      overflow-y: auto;
-    }
-    .slot-avail, .slot-visit {
-      flex: 0 0 auto;
-      text-align: center;
-      font-size: 0.8em;
-      padding: 2px 4px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .calendar td {
-      vertical-align: top;
-      min-height: 120px;
-      width: 110px;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/calendar.css">
   <script>
   function selectDay(dateStr) {
     // Atualiza o campo hidden e o campo de data exibido
