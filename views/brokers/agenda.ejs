@@ -42,175 +42,179 @@
       </strong>
       <button onclick="changeMonth(1)">Próximo mês &gt;</button>
     </div>
-    <table class="calendar">
-      <thead>
-        <tr>
-          <th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% 
-          let day = 1;
-          let started = false;
-          for (let week = 0; week < 6; week++) { 
-        %>
-          <tr>
-          <% for (let dow = 0; dow < 7; dow++) { 
-            const cellDate = new Date(currentYear, currentMonth - 1, day);
-            const cellDateStr = cellDate.toISOString().slice(0,10);
-            const isToday = (cellDateStr === todayStr);
-            const isSelected = (cellDateStr === selectedDay);
-            const isThisMonth = (week > 0 || dow >= firstDayOfWeek) && day <= daysInMonth;
-            let hasAvail = false;   // possui pelo menos uma disponibilidade
-            let hasVisit = false;   // possui pelo menos uma visita
-            let allVisit = false;   // todas as disponibilidades são visitas
-            let availsForDay = [];
-            if (isThisMonth) {
-              availsForDay = availability.filter(a => {
-                const d = new Date(a.starts_at);
-                return d.getFullYear() === cellDate.getFullYear() && d.getMonth() === cellDate.getMonth() && d.getDate() === cellDate.getDate();
-              });
-              hasAvail = availsForDay.length > 0;
-              hasVisit = availsForDay.some(a => a.description === 'visit');
-              if (hasVisit && availsForDay.every(a => a.description === 'visit')) {
-                allVisit = true; // não há horário livre, tudo visit
-              }
-            }
-          %>
-            <td class="calendar-day
-              <% if (isThisMonth) { %>
-                <% if (isToday) { %> today<% } %>
-                <% if (isSelected) { %> selected<% } %>
-                <% if (allVisit) { %> has-visit<% } else if (hasAvail) { %> has-availability<% } %>
-              <% } %>"
-              <% if (isThisMonth) { %>
-                onclick="selectDay('<%= cellDateStr %>')"
-                title="Clique para adicionar disponibilidade"
-              <% } %>
-            >
-              <% if (isThisMonth) { %>
-                <div><%= day %></div>
-                <% if (availsForDay.length > 0) { %>
-                  <div class="day-slots-box">
-                    <% availsForDay.forEach(a => { %>
-                      <div>
-                        <% 
-                          const d = new Date(a.starts_at);
-                          const h = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
-                        %>
-                        <span class="<%= a.description === 'visit' ? 'slot-visit' : 'slot-avail' %>"><%= h %></span>
-                      </div>
-                    <% }) %>
-                  </div>
-                <% } %>
-                <% if (isSelected) { %>
-                  <div style="margin-top:0.2em; color:#007bff; font-size:0.85em; font-weight:bold;">Selecionado</div>
-                <% } %>
-              <% } %>
-            </td>
-          <% if (isThisMonth) day++; } %>
-          </tr>
-          <% if (day > daysInMonth) break; %>
-        <% } %>
-      </tbody>
-    </table>
-
-    <h2>Adicionar Disponibilidade</h2>
-    <form id="addAvailabilityForm" action="/brokers/<%= broker.id %>/agenda/add" method="POST">
-      <input type="hidden" id="selectedDay" name="day" value="<%= selectedDay %>">
-      <label>
-        Dia:
-        <input type="date" name="day_display" id="dayDisplay" value="<%= selectedDay %>" required readonly
-          onclick="this.type='date';this.readOnly=false;">
-      </label>
-      <label>
-        Horário:
-        <select name="time_slot" required>
-          <% if (availableSlots.length === 0) { %>
-            <option value="">Nenhum horário disponível</option>
-          <% } else { %>
-            <% availableSlots.forEach(slot => { %>
-              <option value="<%= slot %>"><%= slot %></option>
-            <% }) %>
-          <% } %>
-        </select>
-      </label>
-      <script>
-        // Ao submeter, monta o campo "day" com timezone -03:00
-        document.getElementById('addAvailabilityForm').onsubmit = function(e) {
-          var day = document.getElementById('dayDisplay').value;
-          var time = this.time_slot.value;
-          if (day && time) {
-            // Monta o campo hidden "day" no formato YYYY-MM-DDTHH:MM:00-03:00
-            document.getElementById('selectedDay').value = day + 'T' + time + ':00-03:00';
-          }
-        };
-      </script>
-      <button type="submit" <%= availableSlots.length === 0 ? 'disabled' : '' %>>Adicionar</button>
-    </form>
-
-    <h2>Disponibilidades do Dia Selecionado</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Início</th>
-          <th>Fim</th>
-          <th>Descrição</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% 
-          const selectedAvail = availability.filter(a => {
-            const d = new Date(a.starts_at);
-            return d.toISOString().slice(0, 10) === selectedDay;
-          });
-          if (selectedAvail.length === 0) { 
-        %>
-          <tr><td colspan="4">Nenhuma disponibilidade cadastrada para este dia.</td></tr>
-        <% } %>
-        <% selectedAvail.forEach(a => { %>
-          <tr>
-            <td>
-              <% 
-                let inicio = '';
-                if (a.starts_at) {
-                  const d = new Date(a.starts_at);
-                  inicio = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+    <div class="agenda-content">
+      <div class="calendar-box">
+        <table class="calendar">
+          <thead>
+            <tr>
+              <th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% 
+              let day = 1;
+              let started = false;
+              for (let week = 0; week < 6; week++) { 
+            %>
+              <tr>
+              <% for (let dow = 0; dow < 7; dow++) { 
+                const cellDate = new Date(currentYear, currentMonth - 1, day);
+                const cellDateStr = cellDate.toISOString().slice(0,10);
+                const isToday = (cellDateStr === todayStr);
+                const isSelected = (cellDateStr === selectedDay);
+                const isThisMonth = (week > 0 || dow >= firstDayOfWeek) && day <= daysInMonth;
+                let hasAvail = false;   // possui pelo menos uma disponibilidade
+                let hasVisit = false;   // possui pelo menos uma visita
+                let allVisit = false;   // todas as disponibilidades são visitas
+                let availsForDay = [];
+                if (isThisMonth) {
+                  availsForDay = availability.filter(a => {
+                    const d = new Date(a.starts_at);
+                    return d.getFullYear() === cellDate.getFullYear() && d.getMonth() === cellDate.getMonth() && d.getDate() === cellDate.getDate();
+                  });
+                  hasAvail = availsForDay.length > 0;
+                  hasVisit = availsForDay.some(a => a.description === 'visit');
+                  if (hasVisit && availsForDay.every(a => a.description === 'visit')) {
+                    allVisit = true; // não há horário livre, tudo visit
+                  }
                 }
               %>
-              <%= inicio %>
-            </td>
-            <td>
-              <% 
-                let fim = '';
-                if (a.ends_at) {
-                  const d = new Date(a.ends_at);
-                  fim = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
-                }
-              %>
-              <%= fim %>
-            </td>
-            <td>
-              <%= a.description ? a.description : '' %>
-            </td>
-            <td>
-              <% if (a.description === 'visit') { %>
-                <button type="button" disabled title="Não é possível remover uma disponibilidade vinculada a uma visita agendada.">Indisponível</button>
+                <td class="calendar-day
+                  <% if (isThisMonth) { %>
+                    <% if (isToday) { %> today<% } %>
+                    <% if (isSelected) { %> selected<% } %>
+                    <% if (allVisit) { %> has-visit<% } else if (hasAvail) { %> has-availability<% } %>
+                  <% } %>"
+                  <% if (isThisMonth) { %>
+                    onclick="selectDay('<%= cellDateStr %>')"
+                    title="Clique para adicionar disponibilidade"
+                  <% } %>
+                >
+                  <% if (isThisMonth) { %>
+                    <div><%= day %></div>
+                    <% if (availsForDay.length > 0) { 
+                         const visitCnt = availsForDay.filter(x => x.description === 'visit').length;
+                         const freeCnt = availsForDay.length - visitCnt; %>
+                         <div style="font-size:0.8em; margin-top:4px;">
+                           <% if (freeCnt > 0) { %>
+                             <span style="color:#28a745; font-weight:bold;"><%= freeCnt %></span>
+                           <% } %>
+                           <% if (visitCnt > 0) { %>
+                             <span style="color:#e63d31; font-weight:bold; margin-left:4px;"><%= visitCnt %></span>
+                           <% } %>
+                         </div>
+                    <% } %>
+                    <% if (isSelected) { %>
+                      <div style="margin-top:0.2em; color:#007bff; font-size:0.85em; font-weight:bold;">Selecionado</div>
+                    <% } %>
+                  <% } %>
+                </td>
+              <% if (isThisMonth) day++; } %>
+              </tr>
+              <% if (day > daysInMonth) break; %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+      <div class="agenda-side">
+        <h2>Adicionar Disponibilidade</h2>
+        <form id="addAvailabilityForm" action="/brokers/<%= broker.id %>/agenda/add" method="POST">
+          <input type="hidden" id="selectedDay" name="day" value="<%= selectedDay %>">
+          <label>
+            Dia:
+            <input type="date" name="day_display" id="dayDisplay" value="<%= selectedDay %>" required readonly
+              onclick="this.type='date';this.readOnly=false;">
+          </label>
+          <label>
+            Horário:
+            <select name="time_slot" required>
+              <% if (availableSlots.length === 0) { %>
+                <option value="">Nenhum horário disponível</option>
               <% } else { %>
-                <form action="/brokers/<%= broker.id %>/agenda/delete/<%= a.id %>" method="POST" style="display:inline;">
-                  <button type="submit" 
-                          onclick="return confirm('Deseja remover esta disponibilidade?')"
-                          title="Remover esta disponibilidade">
-                    Remover
-                  </button>
-                </form>
+                <% availableSlots.forEach(slot => { %>
+                  <option value="<%= slot %>"><%= slot %></option>
+                <% }) %>
               <% } %>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
+            </select>
+          </label>
+          <script>
+            // Ao submeter, monta o campo "day" com timezone -03:00
+            document.getElementById('addAvailabilityForm').onsubmit = function(e) {
+              var day = document.getElementById('dayDisplay').value;
+              var time = this.time_slot.value;
+              if (day && time) {
+                // Monta o campo hidden "day" no formato YYYY-MM-DDTHH:MM:00-03:00
+                document.getElementById('selectedDay').value = day + 'T' + time + ':00-03:00';
+              }
+            };
+          </script>
+          <button type="submit" <%= availableSlots.length === 0 ? 'disabled' : '' %>>Adicionar</button>
+        </form>
+
+        <h2>Disponibilidades do Dia Selecionado</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Início</th>
+              <th>Fim</th>
+              <th>Descrição</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% 
+              const selectedAvail = availability.filter(a => {
+                const d = new Date(a.starts_at);
+                return d.toISOString().slice(0, 10) === selectedDay;
+              });
+              if (selectedAvail.length === 0) { 
+            %>
+              <tr><td colspan="4">Nenhuma disponibilidade cadastrada para este dia.</td></tr>
+            <% } %>
+            <% selectedAvail.forEach(a => { %>
+              <tr>
+                <td>
+                  <% 
+                    let inicio = '';
+                    if (a.starts_at) {
+                      const d = new Date(a.starts_at);
+                      inicio = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+                    }
+                  %>
+                  <%= inicio %>
+                </td>
+                <td>
+                  <% 
+                    let fim = '';
+                    if (a.ends_at) {
+                      const d = new Date(a.ends_at);
+                      fim = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+                    }
+                  %>
+                  <%= fim %>
+                </td>
+                <td>
+                  <%= a.description ? a.description : '' %>
+                </td>
+                <td>
+                  <% if (a.description === 'visit') { %>
+                    <button type="button" disabled title="Não é possível remover uma disponibilidade vinculada a uma visita agendada.">Indisponível</button>
+                  <% } else { %>
+                    <form action="/brokers/<%= broker.id %>/agenda/delete/<%= a.id %>" method="POST" style="display:inline;">
+                      <button type="submit" 
+                              onclick="return confirm('Deseja remover esta disponibilidade?')"
+                              title="Remover esta disponibilidade">
+                        Remover
+                      </button>
+                    </form>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </main>
 </body>
 </html>

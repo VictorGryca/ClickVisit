@@ -8,7 +8,7 @@ th, td { padding: .4rem .8rem; border: 1px solid #666; text-align: center; }
 /* table cells */
 .calendar td {
   vertical-align: top;
-  min-height: 120px;
+  min-height: 150px;
   width: 110px;
 }
 

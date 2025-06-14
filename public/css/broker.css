@@ -86,4 +86,19 @@
   font-weight:600;
   font-size:14px;
 }
-.broker-logout a:hover{color:#e66331;} 
+.broker-logout a:hover{color:#e66331;}
+
+/* Agenda layout */
+.agenda-content{
+  display:flex;
+  gap:40px;
+  flex-wrap:wrap;
+}
+.calendar-box{
+  flex:0 0 900px;
+}
+.agenda-side{
+  flex:1 1 250px;
+}
+.agenda-side h2{margin-top:0;}
+.agenda-side form, .agenda-side table{width:100%;} 
