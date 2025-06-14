@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Agenda do Corretor <%= broker.name %> / <%= property.address %></title>
   <link rel="stylesheet" href="/css/calendar.css">
+  <link rel="stylesheet" href="/css/client-calendar.css">
   <script>
     function selectDay(dateStr) {
       const url = new URL(window.location.href);
@@ -24,16 +25,23 @@
   </script>
 </head>
 <body>
-  <h1>Agenda do Corretor: <%= broker.name %> / Imóvel: <%= property.address %></h1>
-  <a href="/brokers/<%= broker.id %>/properties"><button>Voltar</button></a>
-  <h2>Calendário</h2>
-  <div>
-    <button onclick="changeMonth(-1)">&lt; Mês anterior</button>
-    <strong>
-      <%= currentMonthName %> / <%= currentYear %>
-    </strong>
-    <button onclick="changeMonth(1)">Próximo mês &gt;</button>
-  </div>
+  <div class="client-calendar">
+    <aside class="client-sidebar">
+      <div class="avatar">Imobiliária</div>
+      <div class="avatar-small">Corretor</div>
+      <div class="property-img"></div>
+      <div class="prop-address"><%= property.address %></div>
+      <!-- espaço para possível info de slot selecionado -->
+      <div class="desc-box"></div>
+    </aside>
+
+    <main class="calendar-main">
+      <h2>Selecione a data e horário</h2>
+      <div>
+        <button onclick="changeMonth(-1)">&lt; Mês anterior</button>
+        <strong><%= currentMonthName %> / <%= currentYear %></strong>
+        <button onclick="changeMonth(1)">Próximo mês &gt;</button>
+      </div>
   <%
     // Função para criar Date em UTC-3 (São Paulo)
     function dateInSaoPaulo(dateStr) {
@@ -94,19 +102,7 @@
             <% } %>
           >
             <% if (isThisMonth) { %>
-              <div><%= day %></div>
-              <% if (slots.length > 0) { %>
-                <div style="font-size:0.8em; margin-top:0.2em;">
-                  <% slots.forEach(slot => { %>
-                    <div class="slot"><%= slot %></div>
-                  <% }) %>
-                </div>
-              <% } else { %>
-                <div class="no-slots">Sem horários</div>
-              <% } %>
-              <% if (isSelected) { %>
-                <div style="margin-top:0.2em; color:#007bff; font-size:0.85em; font-weight:bold;">Selecionado</div>
-              <% } %>
+              <div class="day-num"><%= day %></div>
             <% } %>
           </td>
         <% if (isThisMonth) day++; } %>
@@ -115,26 +111,62 @@
       <% } %>
     </tbody>
   </table>
-  <h2>Horários disponíveis no dia <%= selectedDay %></h2>
-  <form id="visitForm" method="get" action="/client/schedule/<%= broker.id %>/<%= property.id %>/book">
-    <ul>
-      <% if (availabilityByDay[selectedDay] && availabilityByDay[selectedDay].length > 0) { %>
-        <% availabilityByDay[selectedDay].forEach(slot => { %>
-          <li>
-            <label>
-              <input type="radio" name="slot" value="<%= slot %>" required>
-              <%= slot %>
-            </label>
-          </li>
-        <% }) %>
-      <% } else { %>
-        <li>Nenhum horário disponível.</li>
-      <% } %>
-    </ul>
-    <% if (availabilityByDay[selectedDay] && availabilityByDay[selectedDay].length > 0) { %>
-      <input type="hidden" name="day" value="<%= selectedDay %>">
-      <button type="submit">Marcar visita</button>
-    <% } %>
-  </form>
+    </main>
+
+    <aside class="client-sidebar-right">
+      <div id="dateLabel" class="date-label"></div>
+      <form id="visitForm" method="get" action="/client/schedule/<%= broker.id %>/<%= property.id %>/book" style="width:100%;">
+        <ul class="slot-list">
+        <% if (availabilityByDay[selectedDay] && availabilityByDay[selectedDay].length > 0) { %>
+          <% availabilityByDay[selectedDay].forEach(slot => { %>
+            <li>
+              <label class="slot-btn" data-time="<%= slot %>">
+                <input type="radio" name="slot" value="<%= slot %>" style="display:none;">
+                <span class="slot-time"><%= slot %></span>
+                <span class="slot-confirm">OK</span>
+              </label>
+            </li>
+          <% }) %>
+        <% } else { %>
+          <li>Nenhum horário disponível.</li>
+        <% } %>
+        </ul>
+        <input type="hidden" name="day" value="<%= selectedDay %>">
+      </form>
+    </aside>
+  </div>
+  <footer class="footer">Imobiliária &middot; Copyright © - 2025</footer>
+
+  <script>
+    // Realça o slot escolhido
+    const slotWrappers = document.querySelectorAll('.slot-btn');
+    slotWrappers.forEach(w => {
+      const radio = w.querySelector('input[type="radio"]');
+      const confirmSpan = w.querySelector('.slot-confirm');
+      const timeSpan = w.querySelector('.slot-time');
+
+      timeSpan.addEventListener('click', () => {
+        // remove active from others
+        slotWrappers.forEach(o => o.classList.remove('active'));
+        w.classList.add('active');
+        radio.checked = true;
+      });
+
+      confirmSpan.addEventListener('click', () => {
+        // ensure selected and then submit form
+        radio.checked = true;
+        document.getElementById('visitForm').submit();
+      });
+    });
+
+    // Define label de data
+    const label = document.getElementById('dateLabel');
+    if (label) {
+      const parts = '<%= selectedDay %>'.split('-');
+      const selDate = new Date(parts[0], parts[1]-1, parts[2]);
+      const opts = { weekday: 'long', day: 'numeric', month: 'long' };
+      label.textContent = selDate.toLocaleDateString('pt-BR', opts);
+    }
+  </script>
 </body>
 </html>
