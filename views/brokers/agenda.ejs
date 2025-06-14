@@ -152,67 +152,35 @@
         </form>
 
         <h2>Disponibilidades do Dia Selecionado</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Início</th>
-              <th>Fim</th>
-              <th>Descrição</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% 
-              const selectedAvail = availability.filter(a => {
+        <% 
+          const selectedAvail = availability.filter(a => {
+            const d = new Date(a.starts_at);
+            return d.toISOString().slice(0, 10) === selectedDay;
+          });
+        %>
+        <div class="time-list">
+          <% selectedAvail.sort((a,b) => new Date(a.starts_at) - new Date(b.starts_at)); %>
+          <% if (selectedAvail.length === 0) { %>
+            <p>Nenhuma disponibilidade cadastrada para este dia.</p>
+          <% } %>
+          <% selectedAvail.forEach(a => { 
+              let inicio = '';
+              if (a.starts_at) {
                 const d = new Date(a.starts_at);
-                return d.toISOString().slice(0, 10) === selectedDay;
-              });
-              if (selectedAvail.length === 0) { 
-            %>
-              <tr><td colspan="4">Nenhuma disponibilidade cadastrada para este dia.</td></tr>
-            <% } %>
-            <% selectedAvail.forEach(a => { %>
-              <tr>
-                <td>
-                  <% 
-                    let inicio = '';
-                    if (a.starts_at) {
-                      const d = new Date(a.starts_at);
-                      inicio = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
-                    }
-                  %>
-                  <%= inicio %>
-                </td>
-                <td>
-                  <% 
-                    let fim = '';
-                    if (a.ends_at) {
-                      const d = new Date(a.ends_at);
-                      fim = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
-                    }
-                  %>
-                  <%= fim %>
-                </td>
-                <td>
-                  <%= a.description ? a.description : '' %>
-                </td>
-                <td>
-                  <% if (a.description === 'visit') { %>
-                    <button type="button" disabled title="Não é possível remover uma disponibilidade vinculada a uma visita agendada.">Indisponível</button>
-                  <% } else { %>
-                    <form action="/brokers/<%= broker.id %>/agenda/delete/<%= a.id %>" method="POST" style="display:inline;">
-                      <button type="submit" 
-                              onclick="return confirm('Deseja remover esta disponibilidade?')"
-                              title="Remover esta disponibilidade">
-                        Remover
-                      </button>
-                    </form>
-                  <% } %>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
+                inicio = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+              }
+          %>
+            <div class="time-slot <%= a.description === 'visit' ? 'visit' : 'availability' %>">
+              <%= inicio %>
+              <% if (a.description !== 'visit') { %>
+                <form action="/brokers/<%= broker.id %>/agenda/delete/<%= a.id %>" method="POST" style="display:inline; margin-left:10px;">
+                  <button type="submit" class="remove-btn" title="Remover disponibilidade"
+                          onclick="return confirm('Deseja remover esta disponibilidade?')">&#10005;</button>
+                </form>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
       </div>
     </div>
   </main>

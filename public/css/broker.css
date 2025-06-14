@@ -101,4 +101,50 @@
   flex:1 1 250px;
 }
 .agenda-side h2{margin-top:0;}
-.agenda-side form, .agenda-side table{width:100%;} 
+.agenda-side form, .agenda-side table{width:100%;}
+
+/* Lista vertical de horários (disponibilidades/visitas) */
+.time-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.time-slot {
+  border: 2px solid #333;
+  border-radius: 6px;
+  padding: 18px 0;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  background: #fff;
+  cursor: default;
+}
+
+/* Disponibilidade livre */
+.time-slot.availability {
+  background: #d4ffd4; /* verde claro */
+  border-color: #28a745;
+}
+
+/* Visita agendada */
+.time-slot.visit {
+  background: #ffdbb3; /* laranja claro */
+  border-color: #e63d31;
+}
+
+/* Botão de remoção dentro dos slots */
+.time-slot .remove-btn {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.time-slot .remove-btn:hover {
+  color: #e63d31;
+} 
