@@ -3,7 +3,7 @@
 
 ![ClickVisit](./assetsWAD/logoClickVisit.png) 
 
-#### Victor Grycajuk
+#### por Victor Grycajuk
 ----
 
 
@@ -237,10 +237,10 @@ Grande parte das telas ainda estão grosseiras, toda a fucionalidade foi impleme
 Aqui estão algumas imagens das principais telas:
 
 <div align="center">
-<sub align="center">Figura 8 - Agenda da Propriedade  </sub>
+<sub align="center">Figura 8 - Login  </sub>
 </div>
 <div align="center">
-<img src="./assetsWAD/agendaDaPropriedade.png" alt="pagendaDaPropriedade" border="0" width=100% height=100%>
+<img src="./assetsWAD/loginClickVisit.png" alt="pagendaDaPropriedade" border="0" width=100% height=100%>
 </div>
 <div align="center">
 <sup>Fonte: Victor Grycajuk, 2025.</sup>
@@ -250,17 +250,28 @@ Aqui estão algumas imagens das principais telas:
 <sub align="center">Figura 9 - Agenda do corretor  </sub>
 </div>
 <div align="center">
-<img src="./assetsWAD/agendaDeDisponibilidade.png" alt="pagendaDaPropriedade" border="0" width=100% height=100%>
+<img src="./assetsWAD/agendaCorretorClickVisit.png" alt="pagendaDaPropriedade" border="0" width=100% height=100%>
 </div>
 <div align="center">
 <sup>Fonte: Victor Grycajuk, 2025.</sup>
 </div>
 
 <div align="center">
-<sub align="center">Figura 10 - Agendamento  </sub>
+<sub align="center">Figura 10 - Agenda da Propriedade  </sub>
 </div>
 <div align="center">
-<img src="./assetsWAD/clientSchedule.png" alt="pagendaDaPropriedade" border="0" width=100% height=100%>
+<img src="./assetsWAD/agendaPropriedadeClickVisit.png" alt="pagendaDaPropriedade" border="0" width=100% height=100%>
+</div>
+<div align="center">
+<sup>Fonte: Victor Grycajuk, 2025.</sup>
+</div>
+
+
+<div align="center">
+<sub align="center">Figura 11 - Agendamento  </sub>
+</div>
+<div align="center">
+<img src="./assetsWAD/clienteClickVisit.png" alt="pagendaDaPropriedade" border="0" width=100% height=100%>
 </div>
 <div align="center">
 <sup>Fonte: Victor Grycajuk, 2025.</sup>
@@ -272,19 +283,22 @@ Aqui estão algumas imagens das principais telas:
 
 ### 4.1 Demonstração do Sistema Web (Semana 8)
 
-*VIDEO: Insira o link do vídeo demonstrativo nesta seção*
-*Descreva e ilustre aqui o desenvolvimento do sistema web completo, explicando brevemente o que foi entregue em termos de código e sistema. Utilize prints de tela para ilustrar.*
+Veja o funcionamento do sistema:
+[Video demonstrativo](https://drive.google.com/file/d/1o0AENcoTsx6A9lpihsi9iEoB1boTJpUp/view?usp=sharing)
+
+O sistem web do ClickVisit consiste em 2 tipos de logins principais, Imobiliarias (Agency) e Corretores (Broker). Cada tela ou view desses logins tem seu conjunto MC (Model e Controller). Todos os dados sao armazenados dinamicamente em um banco de dados hospedado pelo [Supa Base](https://supabase.com).
+
+
 
 ### 4.2 Conclusões e Trabalhos Futuros (Semana 8)
 
-*Indique pontos fortes e pontos a melhorar de maneira geral.*
-*Relacione também quaisquer outras ideias que você tenha para melhorias futuras.*
+O sistema se mostrou robusto e consistente na visualização correta de agendas tanto do corretor, quanto do imovel e consequentemente de horários disponiveis para o cliente. Porém, o UI não esta suficientemente satisfatório, por conta de tempo o frontend não foi tão trabalhado quanto o backend. Sendo assim, o principal ponto de melhora é justamente o aperfeiçoamento do UI e UX. Outro ponto de melhora seria a inclusão de imagens, tanto do corretor quanto da imobiliaria, que seriam armazenados no banco de dados. E mais um ponto de melhora seria a possibilidade de geração de um link com URL encriptado para o cliente, dessa forma o cliente não conseguiria trocar os números no link e assim conseguir agendar um horário com outro corretor em outro imóvel.
 
+Um dos principais desafios enfrentados foi o cruzamento dos horários do imóvel e do corretor, para que apenas os horários disponiveis pelo dois fossem mostrados ao cliente. O que mais dificultou esse processo foi o entendimento de como funcionava o banco de dados de "timestampz", ou seja, horarios com "time zones". Os horários armazenados no banco de dados estão sempre em UTC0 e SP está em UTC-3, ou seja, o processo de transformação de UTC0 em UTC-3 gerou problemas. Para entender melhor sobre o problema, assista o [vídeo demonstrativo](https://drive.google.com/file/d/1o0AENcoTsx6A9lpihsi9iEoB1boTJpUp/view?usp=sharing), nele eu explico um pouco melhor o precesso.
 
 
 ## <a name="c5"></a>5. Referências
 
-_Incluir as principais referências de seu projeto, para que seu parceiro possa consultar caso ele se interessar em aprofundar. Um exemplo de referência de livro e de site:_<br>
 
 ---
 ---

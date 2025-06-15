@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Agenda da Propriedade <%= property.address %></title>
-  <link rel="stylesheet" href="/css/property-calendar.css">
+  <link rel="stylesheet" href="/css/calendar.css">
   <script>
     function selectDay(dateStr) {
       const url = new URL(window.location.href);
@@ -128,6 +128,19 @@
     </tbody>
   </table>
 
+  <%
+    // Horários possíveis
+    const allowedSlots = ["09:00", "10:30", "13:00", "14:30", "16:00"];
+    // Horários já cadastrados para o dia selecionado
+    const takenSlots = events
+      .filter(ev => getDateStrSP(ev.starts_at) === selectedDay)
+      .map(ev => {
+        const d = dateInSaoPaulo(ev.starts_at);
+        return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+      });
+    // Horários disponíveis
+    const availableSlots = allowedSlots.filter(slot => !takenSlots.includes(slot));
+  %>
   <h2>Adicionar Evento</h2>
   <form action="/agencies/<%= agencyId %>/properties/<%= property.id %>/add-event" method="POST">
     <input type="hidden" name="day" value="<%= selectedDay %>">
@@ -140,18 +153,56 @@
     </label>
     <label>
       Início:
-      <input type="time" name="starts_at" required>
-    </label>
-    <label>
-      Fim:
-      <input type="time" name="ends_at" required>
+      <select name="starts_at" id="starts_at" required <%= availableSlots.length === 0 ? 'disabled' : '' %>>
+        <% if (availableSlots.length === 0) { %>
+          <option value="">Nenhum horário disponível</option>
+        <% } else {
+            availableSlots.forEach(slot => { %>
+              <option value="<%= slot %>"><%= slot %></option>
+        <%   });
+          } %>
+      </select>
     </label>
     <label>
       Descrição:
       <input type="text" name="description" maxlength="100">
     </label>
-    <button type="submit">Adicionar Evento</button>
+    <button type="submit" <%= availableSlots.length === 0 ? 'disabled' : '' %>>Adicionar Evento</button>
+    <% if (availableSlots.length === 0) { %>
+      <div style="color: #888; font-size: 0.95em; margin-top: 0.5em;">Todos os horários deste dia já estão ocupados.</div>
+    <% } %>
   </form>
+  <script>
+    // Define os pares de horários permitidos
+    const slotMap = {
+      "09:00": "10:30",
+      "10:30": "12:00",
+      "13:00": "14:30",
+      "14:30": "16:00",
+      "16:00": "17:30"
+    };
+    function updateEndsAtOptions() {
+      const start = document.getElementById('starts_at').value;
+      const endsAt = document.getElementById('ends_at');
+      // Limpa opções
+      endsAt.innerHTML = '';
+      if (slotMap[start]) {
+        const opt = document.createElement('option');
+        opt.value = slotMap[start];
+        opt.textContent = slotMap[start];
+        endsAt.appendChild(opt);
+      }
+    }
+    // Inicializa o campo de fim ao carregar
+    document.addEventListener('DOMContentLoaded', function() {
+      updateEndsAtOptions();
+    });
+    // Garante que o campo de fim está correto ao submeter
+    function setEndsAt() {
+      updateEndsAtOptions();
+      return true;
+    }
+  </script>
 
   <h2>Eventos do Dia Selecionado</h2>
   <table>
@@ -184,9 +235,13 @@
           </td>
           <td><%= ev.description || '' %></td>
           <td>
-            <form action="/agencies/<%= agencyId %>/properties/<%= property.id %>/delete-event/<%= ev.id %>" method="POST" style="display:inline;">
-              <button type="submit" onclick="return confirm('Deseja remover este evento?')">Remover</button>
-            </form>
+            <% if (ev.event_type === 'visit') { %>
+              <button type="button" disabled title="Não é possível remover um evento de visita agendada.">Indisponível</button>
+            <% } else { %>
+              <form action="/agencies/<%= agencyId %>/properties/<%= property.id %>/delete-event/<%= ev.id %>" method="POST" style="display:inline;">
+                <button type="submit" onclick="return confirm('Deseja remover este evento?')" title="Remover este evento">Remover</button>
+              </form>
+            <% } %>
           </td>
         </tr>
       <% }) %>

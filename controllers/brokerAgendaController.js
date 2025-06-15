@@ -9,6 +9,9 @@ exports.index = async (req, res) => {
 
     const availability = await Broker.getAvailability(brokerId);
 
+    // Visitas do corretor (para exibir cliente/imóvel nos slots de visita)
+    const visits = await Broker.getVisits(brokerId);
+
     // Calendar logic
     const now = new Date();
     const currentMonth = parseInt(req.query.month) || (now.getMonth() + 1);
@@ -50,7 +53,9 @@ exports.index = async (req, res) => {
       todayStr,
       currentMonthName,
       selectedDay,
-      availableSlots
+      selectedDayDisplay: selectedDay.split('-').reverse().join('/'),
+      availableSlots,
+      visits
     });
   } catch (err) {
     res.status(500).send('Erro ao buscar agenda do corretor.');
@@ -102,7 +107,25 @@ exports.delete = async (req, res) => {
   const brokerId = req.params.id;
   const availabilityId = req.params.availId;
   try {
-    await require('../models/broker').deleteAvailability(brokerId, availabilityId);
+    const Availability = require('../models/availability');
+
+    // Busca a disponibilidade
+    const availability = await Availability.getById(availabilityId, brokerId);
+    if (!availability) {
+      return res.status(404).send('Disponibilidade não encontrada.');
+    }
+
+    if (availability.description === 'visit') {
+      // Exibe popup e redireciona de volta
+      return res.send(`
+        <script>
+          alert('Não é possível remover uma disponibilidade vinculada a uma visita agendada.');
+          window.location.href = '/brokers/${brokerId}/agenda';
+        </script>
+      `);
+    }
+
+    await Availability.delete(availabilityId, brokerId);
     res.redirect(`/brokers/${brokerId}/agenda`);
   } catch (err) {
     res.status(500).send('Erro ao deletar disponibilidade.');

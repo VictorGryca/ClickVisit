@@ -1,4 +1,3 @@
-
 ![ClickVisit](documents/assetsWAD/logoClickVisitBranco.png) 
 ----
 Aplicação web para **agendamento de visitas a imóveis**. Corretores (autônomos ou vinculados a uma imobiliária) geram links de agendamento; clientes escolhem o melhor horário dentre a agenda do corretor e a disponibilidade do imóvel.
@@ -25,17 +24,19 @@ Fluxo resumido:
 3. Sistema grava em `events` e `visits`.
 4. Horário fica bloqueado para novos agendamentos.
 
+### Demonstração
+
+[Assista ao vídeo de demonstração](https://drive.google.com/file/d/1o0AENcoTsx6A9lpihsi9iEoB1boTJpUp/view?usp=sharing)
+
 ---
 
 **Padrão MVC:** Estrutura organizada em Model, View e Controller
 
 **PostgreSQL:** Banco de dados relacional utilizado para persistência dos dados.
 
-**UUID:** Utilização de UUID como chave primária na tabela `users`.
-
 **Scripts com `nodemon`:** Utilização do `nodemon` para reiniciar automaticamente o servidor após alterações no código.
 
-**Testes:** Inclui estrutura básica para testes automatizados.
+**Testes:** Inclui estrutura básica para testes automatizados
 
 
 
@@ -48,21 +49,50 @@ Fluxo resumido:
 │   └── db.js            # conexão PostgreSQL
 ├── controllers/         # lógica de negócio (por entidade)
 │   ├── agencyController.js
-│   └── propertyController.js
+│   ├── adminController.js
+│   ├── brokerAgendaController.js
+│   ├── brokerController.js
+│   ├── brokerVisitController.js
+│   ├── clientScheduleController.js
+│   ├── loginController.js
+│   ├── propertyController.js
+│   └── ...
 ├── documents/
 │   ├── assetsWAD/
 │   |   └── ...
 │   └── PI-WAD.md        # documentação acadêmica
 ├── models/              # mapeamento das tabelas (DAO)
 │   ├── agency.js
-│   └── property.js
+│   ├── property.js
+│   ├── broker.js
+│   ├── brokerProperty.js
+│   ├── client.js
+│   ├── event.js
+│   ├── availability.js
+│   ├── visit.js
+│   ├── login.js
+│   └── ...
 ├── node_modules/ 
 │   └── ...
-├── public/              # CSS, JS e imgs servidos pelo Express
-│   └── ...
+├── public/              # CSS, JS e imagens servidos pelo Express
+│   ├── css/
+│   │   ├── style.css
+│   │   ├── broker.css
+│   │   ├── calendar.css
+│   │   ├── client-calendar.css
+│   │   ├── login.css
+│   │   └── ...
+│   └── assets/
+│       └── ...
 ├── routes/
-│   ├── agency.js        # exemplo de rota
-│   └── property.js
+│   ├── agency.js
+│   ├── admin.js
+│   ├── broker.js
+│   ├── brokerAgenda.js
+│   ├── client.js
+│   ├── login.js
+│   ├── property.js
+│   └── ...
 ├── scripts/
 │   ├── ClickVisit.sql   # schema completo do banco
 │   └── runSQLScript.js  # utilitário para popular o BD
@@ -75,10 +105,13 @@ Fluxo resumido:
 │   └── userService.test.js
 ├── views/ 
 │   ├── agency/
-|   │   └── index.ejs
-|   ├── property/
-|   │   └── index.ejs
-|   └── ...
+│   ├── property/
+│   ├── brokers/
+│   ├── client/
+│   ├── partials/
+│   ├── components/
+│   ├── pages/
+│   └── ...
 ├── styles/              # Arquivos CSS públicos
 ├── app.js               # app para rodar com NODE
 ├── server.js            # ponto de entrada — sobe o servidor
@@ -131,4 +164,27 @@ Fluxo resumido:
    A aplicação estará em **[http://localhost:3000](http://localhost:3000)**.
 
 ---
+
+## Funcionalidades
+
+- Cadastro e gestão de agências imobiliárias  
+- Cadastro de imóveis vinculados a uma agência  
+- Geração de links públicos de agendamento para corretores  
+- Visualização combinada das agendas do corretor e do imóvel  
+- Reserva automática e bloqueio de horários após agendamento  
+- CRUD completo via painel web (agências, imóveis, corretores, visitas)  
+- API RESTful para integração com outros sistemas  
+- Suporte a testes automatizados com Jest  
+
+
+## Tecnologias Utilizadas
+
+- Node.js (v20+)  
+- Express.js  
+- PostgreSQL  
+- EJS (templating)  
+- Bootstrap 5  
+- Dotenv  
+- Nodemon (dev)  
+- Jest & Supertest (testes)  
 

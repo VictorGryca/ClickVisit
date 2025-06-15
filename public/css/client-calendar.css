@@ -1,0 +1,145 @@
+.client-calendar {
+  display: flex;
+  min-height: 100vh;
+}
+
+.client-sidebar,
+.client-sidebar-right {
+  background: #d3d3d3;
+  padding: 20px;
+  width: 260px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.client-sidebar-right {
+  width: 220px;
+}
+
+.client-sidebar .avatar,
+.client-sidebar .avatar-small {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #bbb;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8em;
+  color: #666;
+}
+
+.client-sidebar .avatar-small {
+  width: 70px;
+  height: 70px;
+}
+
+.client-sidebar .property-img {
+  width: 180px;
+  height: 120px;
+  background: #ccc;
+  margin: 15px 0;
+}
+
+.client-sidebar .prop-address {
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.client-sidebar .desc-box {
+  background: #ccc;
+  width: 180px;
+  height: 100px;
+  margin-top: auto;
+}
+
+.calendar-main {
+  flex: 1;
+  padding: 20px;
+  text-align: center;
+}
+
+.calendar-main h2 {
+  margin-top: 0;
+}
+
+/* Slot list */
+.slot-list {
+  list-style: none;
+  padding: 0;
+  margin: 30px 0 0 0;
+  width: 100%;
+}
+
+/* Slot button wrapper */
+.slot-btn {
+  display: flex;
+  width: 100%;
+  margin-bottom: 15px;
+  border: 2px solid #666;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.slot-time,
+.slot-confirm {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 55px;
+  font-size: 18px;
+  user-select: none;
+}
+
+/* default appearance */
+.slot-time { background: #fff; color: #000; }
+.slot-confirm { display: none; background: #e66331; color: #fff; }
+
+/* hover effect when not selected */
+.slot-btn:not(.active):hover .slot-time { background: #f9d9c9; }
+
+/* active (slot chosen) */
+.slot-btn.active .slot-time {
+  background: #f9d9c9;
+  color: #e66331;
+  border-right: 1px solid #e66331;
+}
+.slot-btn.active .slot-confirm { display: flex; }
+
+/* OK button style */
+.slot-btn.active { border-color: #e66331; }
+
+.footer {
+  background: #777;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
+
+.calendar-day .day-num {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  border-radius: 50%;
+}
+
+.calendar-day.has-slot .day-num {
+  background: #f9d9c9; /* light orange */
+}
+
+.calendar-day.selected .day-num {
+  background: #e66331; /* strong orange */
+  color: #fff;
+}
+
+.date-label {
+  margin-bottom: 15px;
+  font-weight: bold;
+} 

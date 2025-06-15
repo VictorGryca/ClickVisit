@@ -1,0 +1,177 @@
+.broker-layout {
+  margin:0;
+  padding:0;
+  font-family:'Segoe UI', sans-serif;
+  display:flex;
+  min-height:100vh;
+}
+
+.broker-sidebar {
+  width:100px;
+  background:#bfbfbf;
+  padding:25px 15px;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.broker-sidebar .avatar {
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  background:#444;
+  margin-bottom:5px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.broker-sidebar .avatar img{width:100%;height:100%;object-fit:cover;}
+
+.broker-sidebar h3 {
+  font-size:18px;
+  margin:0 0 30px;
+  text-align:center;
+  color:#333;
+}
+
+.broker-sidebar nav ul {
+  list-style:none;
+  padding:0;
+  margin:0;
+  width:100%;
+}
+
+.broker-sidebar nav li {
+  margin-bottom:30px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.broker-sidebar nav a {
+  text-decoration:none;
+  color:#000;
+  font-weight:600;
+  text-transform:uppercase;
+  font-size:14px;
+  display:block;
+  padding:8px 12px;
+  border-radius:6px;
+}
+
+.broker-sidebar nav a:hover {
+  color:#e66331;
+}
+
+.broker-sidebar nav a.active {
+  background:#e66331;
+  color:#fff;
+}
+
+.broker-main {
+  flex:1;
+  padding:30px;
+  box-sizing:border-box;
+}
+
+.broker-logout {
+  margin-top:auto;
+}
+.broker-logout a{
+  text-decoration:none;
+  color:#000;
+  font-weight:600;
+  font-size:14px;
+}
+.broker-logout a:hover{color:#e66331;}
+
+/* Agenda layout */
+.agenda-content{
+  display:flex;
+  gap:40px;
+  flex-wrap:wrap;
+}
+.calendar-box{
+  flex:0 0 900px;
+}
+.agenda-side{
+  flex:1 1 250px;
+}
+.agenda-side h2{margin-top:0;}
+.agenda-side form, .agenda-side table{width:100%;}
+
+/* Lista vertical de horários (disponibilidades/visitas) */
+.time-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 0;
+}
+
+.time-slot {
+  border: 2px solid #333;
+  border-radius: 6px;
+  padding: 18px 0;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  background: #fff;
+  cursor: default;
+  width: 220px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 12px;
+}
+
+/* Disponibilidade livre */
+.time-slot.availability {
+  background: #d4ffd4; /* verde claro */
+  border-color: #28a745;
+}
+
+/* Visita agendada */
+.time-slot.visit {
+  background: #ffdbb3; /* laranja claro */
+  border-color: #e63d31;
+}
+
+/* Botão de remoção dentro dos slots */
+.time-slot .remove-btn {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.time-slot .remove-btn:hover {
+  color: #e63d31;
+}
+
+/* Bloco horário */
+.time-hour {
+  font-size: 22px;
+  font-weight: 600;
+  flex: 0 0 72px;
+  text-align: center;
+}
+
+/* Informações da visita (cliente / imóvel) */
+.time-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.time-info .client-name { font-size: 15px; font-weight: 600; }
+.time-info .property-address { font-size: 13px; color: #555; }
+
+/* Levantar todo bloco lateral para alinhar com calendário */
+.agenda-side { margin-top: -30px; } 
