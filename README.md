@@ -49,21 +49,50 @@ Fluxo resumido:
 │   └── db.js            # conexão PostgreSQL
 ├── controllers/         # lógica de negócio (por entidade)
 │   ├── agencyController.js
-│   └── propertyController.js
+│   ├── adminController.js
+│   ├── brokerAgendaController.js
+│   ├── brokerController.js
+│   ├── brokerVisitController.js
+│   ├── clientScheduleController.js
+│   ├── loginController.js
+│   ├── propertyController.js
+│   └── ...
 ├── documents/
 │   ├── assetsWAD/
 │   |   └── ...
 │   └── PI-WAD.md        # documentação acadêmica
 ├── models/              # mapeamento das tabelas (DAO)
 │   ├── agency.js
-│   └── property.js
+│   ├── property.js
+│   ├── broker.js
+│   ├── brokerProperty.js
+│   ├── client.js
+│   ├── event.js
+│   ├── availability.js
+│   ├── visit.js
+│   ├── login.js
+│   └── ...
 ├── node_modules/ 
 │   └── ...
-├── public/              # CSS, JS e imgs servidos pelo Express
-│   └── ...
+├── public/              # CSS, JS e imagens servidos pelo Express
+│   ├── css/
+│   │   ├── style.css
+│   │   ├── broker.css
+│   │   ├── calendar.css
+│   │   ├── client-calendar.css
+│   │   ├── login.css
+│   │   └── ...
+│   └── assets/
+│       └── ...
 ├── routes/
-│   ├── agency.js        # exemplo de rota
-│   └── property.js
+│   ├── agency.js
+│   ├── admin.js
+│   ├── broker.js
+│   ├── brokerAgenda.js
+│   ├── client.js
+│   ├── login.js
+│   ├── property.js
+│   └── ...
 ├── scripts/
 │   ├── ClickVisit.sql   # schema completo do banco
 │   └── runSQLScript.js  # utilitário para popular o BD
@@ -76,10 +105,13 @@ Fluxo resumido:
 │   └── userService.test.js
 ├── views/ 
 │   ├── agency/
-|   │   └── index.ejs
-|   ├── property/
-|   │   └── index.ejs
-|   └── ...
+│   ├── property/
+│   ├── brokers/
+│   ├── client/
+│   ├── partials/
+│   ├── components/
+│   ├── pages/
+│   └── ...
 ├── styles/              # Arquivos CSS públicos
 ├── app.js               # app para rodar com NODE
 ├── server.js            # ponto de entrada — sobe o servidor
