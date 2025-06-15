@@ -9,6 +9,9 @@ exports.index = async (req, res) => {
 
     const availability = await Broker.getAvailability(brokerId);
 
+    // Visitas do corretor (para exibir cliente/imóvel nos slots de visita)
+    const visits = await Broker.getVisits(brokerId);
+
     // Calendar logic
     const now = new Date();
     const currentMonth = parseInt(req.query.month) || (now.getMonth() + 1);
@@ -51,7 +54,8 @@ exports.index = async (req, res) => {
       currentMonthName,
       selectedDay,
       selectedDayDisplay: selectedDay.split('-').reverse().join('/'),
-      availableSlots
+      availableSlots,
+      visits
     });
   } catch (err) {
     res.status(500).send('Erro ao buscar agenda do corretor.');

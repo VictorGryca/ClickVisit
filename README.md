@@ -1,4 +1,3 @@
-
 ![ClickVisit](documents/assetsWAD/logoClickVisitBranco.png) 
 ----
 Aplicação web para **agendamento de visitas a imóveis**. Corretores (autônomos ou vinculados a uma imobiliária) geram links de agendamento; clientes escolhem o melhor horário dentre a agenda do corretor e a disponibilidade do imóvel.
@@ -25,17 +24,19 @@ Fluxo resumido:
 3. Sistema grava em `events` e `visits`.
 4. Horário fica bloqueado para novos agendamentos.
 
+### Demonstração
+
+[Assista ao vídeo de demonstração](https://drive.google.com/file/d/1o0AENcoTsx6A9lpihsi9iEoB1boTJpUp/view?usp=sharing)
+
 ---
 
 **Padrão MVC:** Estrutura organizada em Model, View e Controller
 
 **PostgreSQL:** Banco de dados relacional utilizado para persistência dos dados.
 
-**UUID:** Utilização de UUID como chave primária na tabela `users`.
-
 **Scripts com `nodemon`:** Utilização do `nodemon` para reiniciar automaticamente o servidor após alterações no código.
 
-**Testes:** Inclui estrutura básica para testes automatizados.
+**Testes:** Inclui estrutura básica para testes automatizados
 
 
 
@@ -131,4 +132,27 @@ Fluxo resumido:
    A aplicação estará em **[http://localhost:3000](http://localhost:3000)**.
 
 ---
+
+## Funcionalidades
+
+- Cadastro e gestão de agências imobiliárias  
+- Cadastro de imóveis vinculados a uma agência  
+- Geração de links públicos de agendamento para corretores  
+- Visualização combinada das agendas do corretor e do imóvel  
+- Reserva automática e bloqueio de horários após agendamento  
+- CRUD completo via painel web (agências, imóveis, corretores, visitas)  
+- API RESTful para integração com outros sistemas  
+- Suporte a testes automatizados com Jest  
+
+
+## Tecnologias Utilizadas
+
+- Node.js (v20+)  
+- Express.js  
+- PostgreSQL  
+- EJS (templating)  
+- Bootstrap 5  
+- Dotenv  
+- Nodemon (dev)  
+- Jest & Supertest (testes)  
 

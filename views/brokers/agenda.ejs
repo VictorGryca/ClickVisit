@@ -119,13 +119,54 @@
         </table>
       </div>
       <div class="agenda-side">
-        <h2>Adicionar Disponibilidade</h2>
+        <h2>Disponibilidades do Dia Selecionado</h2>
+        <% 
+          const selectedAvail = availability.filter(a => {
+            const d = new Date(a.starts_at);
+            return d.toISOString().slice(0, 10) === selectedDay;
+          });
+        %>
+        <div class="time-list">
+          <% selectedAvail.sort((a,b) => new Date(a.starts_at) - new Date(b.starts_at)); %>
+          <% if (selectedAvail.length === 0) { %>
+            <p>Nenhuma disponibilidade cadastrada para este dia.</p>
+          <% } %>
+          <% selectedAvail.forEach(a => { 
+              let inicio = '';
+              if (a.starts_at) {
+                const d = new Date(a.starts_at);
+                inicio = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+              }
+          %>
+            <div class="time-slot <%= a.description === 'visit' ? 'visit' : 'availability' %>">
+              <div class="time-hour"><%= inicio %></div>
+              <% if (a.description === 'visit') { 
+                   const visitInfo = visits.find(v => {
+                     return new Date(v.starts_at).getTime() === new Date(a.starts_at).getTime();
+                   }); %>
+                 <% if (visitInfo) { %>
+                   <div class="time-info">
+                     <span class="client-name"><%= visitInfo.client_name %></span>
+                     <span class="property-address"><%= visitInfo.property_address %></span>
+                   </div>
+                 <% } %>
+              <% } else { %>
+                 <form action="/brokers/<%= broker.id %>/agenda/delete/<%= a.id %>" method="POST" style="display:inline;">
+                   <button type="submit" class="remove-btn" title="Remover disponibilidade"
+                           onclick="return confirm('Deseja remover esta disponibilidade?')">&#10005;</button>
+                 </form>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+
+        <h2 style="margin-top:24px;">Adicionar Disponibilidade</h2>
         <form id="addAvailabilityForm" action="/brokers/<%= broker.id %>/agenda/add" method="POST">
           <input type="hidden" id="selectedDay" name="day" value="<%= selectedDay %>">
           <label>
             Dia:
             <input type="text" name="day_display" id="dayDisplay" value="<%= selectedDayDisplay %>" placeholder="DD/MM/AAAA"
-                   pattern="\d{2}/\d{2}/\d{4}" required>
+                   pattern="[0-9]{2}/[0-9]{2}/[0-9]{4}" required>
           </label>
           <label>
             Horário:
@@ -155,37 +196,6 @@
           </script>
           <button type="submit" <%= availableSlots.length === 0 ? 'disabled' : '' %>>Adicionar</button>
         </form>
-
-        <h2>Disponibilidades do Dia Selecionado</h2>
-        <% 
-          const selectedAvail = availability.filter(a => {
-            const d = new Date(a.starts_at);
-            return d.toISOString().slice(0, 10) === selectedDay;
-          });
-        %>
-        <div class="time-list">
-          <% selectedAvail.sort((a,b) => new Date(a.starts_at) - new Date(b.starts_at)); %>
-          <% if (selectedAvail.length === 0) { %>
-            <p>Nenhuma disponibilidade cadastrada para este dia.</p>
-          <% } %>
-          <% selectedAvail.forEach(a => { 
-              let inicio = '';
-              if (a.starts_at) {
-                const d = new Date(a.starts_at);
-                inicio = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
-              }
-          %>
-            <div class="time-slot <%= a.description === 'visit' ? 'visit' : 'availability' %>">
-              <%= inicio %>
-              <% if (a.description !== 'visit') { %>
-                <form action="/brokers/<%= broker.id %>/agenda/delete/<%= a.id %>" method="POST" style="display:inline; margin-left:10px;">
-                  <button type="submit" class="remove-btn" title="Remover disponibilidade"
-                          onclick="return confirm('Deseja remover esta disponibilidade?')">&#10005;</button>
-                </form>
-              <% } %>
-            </div>
-          <% }) %>
-        </div>
       </div>
     </div>
   </main>
